@@ -2,15 +2,11 @@
 {
     public class GameMode
     {
-        public int Rows { get; }
-        public int Columns { get; }
-        public int PairsCount { get; }
+        public int BotAmount { get; }
 
-        public GameMode(int rows, int columns)
+        public GameMode(int botAmount)
         {
-            Rows = rows;
-            Columns = columns;
-            PairsCount = rows * columns / 2;
+            BotAmount = botAmount;
         }
     }
 }

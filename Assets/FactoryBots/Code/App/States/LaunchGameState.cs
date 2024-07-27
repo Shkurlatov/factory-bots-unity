@@ -8,6 +8,7 @@ using FactoryBots.Game;
 using FactoryBots.Game.Services;
 using FactoryBots.Game.Services.Bots;
 using FactoryBots.Game.Services.Buildings;
+using FactoryBots.Game.Services.Input;
 using FactoryBots.Game.Services.Parking;
 using FactoryBots.UI;
 using System;
@@ -52,6 +53,7 @@ namespace FactoryBots.App.States
 
         private void RegisterGameServices()
         {
+            RegisterInput();
             RegisterParking();
             RegisterBuildings();
             RegisterBots();
@@ -72,6 +74,15 @@ namespace FactoryBots.App.States
             //await RegisterBuffs();
             //await RegisterChat();
             //RegisterCity();
+        }
+
+        private void RegisterInput()
+        {
+            Raycaster raycaster = new Raycaster(Camera.main);
+
+            InputManager input = new InputManager(raycaster);
+            input.Initialize();
+            _gameContext.RegisterSingle<IGameInput>(input);
         }
 
         private void RegisterParking()

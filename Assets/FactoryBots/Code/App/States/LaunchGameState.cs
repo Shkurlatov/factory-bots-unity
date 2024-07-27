@@ -76,7 +76,8 @@ namespace FactoryBots.App.States
         
         private void RegisterBuildings()
         {
-            BoxFactory boxFactory = new BoxFactory();
+            BoxFactory boxFactory = new BoxFactory(
+                _appContext.Single<IAppAssetProvider>());
 
             BuildingManager buildings = Object.FindObjectOfType<BuildingManager>();
             buildings.Initialize(boxFactory);

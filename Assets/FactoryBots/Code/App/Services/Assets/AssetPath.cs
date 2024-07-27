@@ -7,5 +7,6 @@
         public const string AUDIO_PLAYER = "Objects/AudioPlayer";
         public const string BOT = "Objects/Bot";
         public const string BOT_BASE = "Objects/BotBase";
+        public const string BOX = "Objects/Box";
     }
 }

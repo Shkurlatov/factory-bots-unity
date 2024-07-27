@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4211656390192019884}
+  - component: {fileID: 6924400635895510604}
   - component: {fileID: 2263372265974332429}
   - component: {fileID: 4169712503307807486}
   m_Layer: 0
@@ -26,14 +27,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1571170910784904383}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5064924045921899712}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6924400635895510604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1571170910784904383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0375c82862f665243af1ecb61263be95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _navMeshAgent: {fileID: 0}
 --- !u!195 &2263372265974332429
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -168,7 +182,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 39adbed4cee9dc547a2b17ac6077349e,
         type: 3}
       propertyPath: m_Name
-      value: model
+      value: bot
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

@@ -21,6 +21,8 @@ namespace FactoryBots.Game.Services.Bots
 
             foreach (Transform botBasePoint in botBasePoints)
             {
+                GameObject botBase = _assets.Instantiate(AssetPath.BOT_BASE, botBasePoint.position, botBasePoint);
+
                 Bot bot = _assets.Instantiate(AssetPath.BOT, botBasePoint.position, _parent).GetComponent<Bot>();
                 bots.Add(bot);
             }

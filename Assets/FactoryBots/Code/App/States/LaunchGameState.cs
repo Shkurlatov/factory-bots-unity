@@ -5,8 +5,14 @@ using FactoryBots.App.Services.Audio;
 using FactoryBots.App.Services.Progress;
 using FactoryBots.App.Services.Randomizer;
 using FactoryBots.Game;
+using FactoryBots.Game.Services;
+using FactoryBots.Game.Services.Bots;
+using FactoryBots.Game.Services.Buildings;
+using FactoryBots.Game.Services.Parking;
 using FactoryBots.UI;
+using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace FactoryBots.App.States
 {
@@ -20,6 +26,7 @@ namespace FactoryBots.App.States
         private readonly AppServiceContainer _appContext;
 
         private GameMode _gameMode;
+        private GameServiceContainer _gameContext;
 
         public LaunchGameState(IAppStateMachine appStateMachine, SceneLoader sceneLoader, AppServiceContainer appContext)
         {
@@ -33,8 +40,95 @@ namespace FactoryBots.App.States
             _gameMode = gameMode;
             _sceneLoader.Load(GAME_SCENE, OnLoaded);
         }
-
         private void OnLoaded()
+        {
+            //_citySpawnPoint = GameObject.FindGameObjectWithTag("CitySpawnPoint").transform;
+            _gameContext = new GameServiceContainer();
+
+            RegisterGameServices();
+
+            _appStateMachine.Enter<GameState, GameServiceContainer>(_gameContext);
+        }
+
+        private void RegisterGameServices()
+        {
+            RegisterParking();
+            RegisterBuildings();
+            RegisterBots();
+            //RegisterCameraController();
+            //RegisterFogWar();
+            //RegisterPathfinder();
+            //RegisterCitizens();
+            //await RegisterHeroes();
+            //await RegisterBuildings();
+            //await RegisterUnits();
+            //await RegisterArmies();
+            //RegisterExpeditions();
+            //RegisterOverlays();
+            //await RegisterCastles();
+            //await RegisterResourcePoints();
+            //await RegisterBarbarians();
+            //await RegisterBattles();
+            //await RegisterBuffs();
+            //await RegisterChat();
+            //RegisterCity();
+        }
+
+        private void RegisterParking()
+        {
+            ParkingManager parking = GetGameServiceFromScene<ParkingManager>();
+            parking.Initialize();
+            _gameContext.RegisterSingle<IGameParking>(parking);
+        }
+        
+        private void RegisterBuildings()
+        {
+            BoxFactory boxFactory = new BoxFactory();
+
+            BuildingManager buildings = Object.FindObjectOfType<BuildingManager>();
+            buildings.Initialize(boxFactory);
+            _gameContext.RegisterSingle<IGameBuildings>(buildings);
+        }
+        
+        private void RegisterBots()
+        {
+            BotFactory botFactory = new BotFactory(
+                _appContext.Single<IAppAssetProvider>());
+
+            BotManager botManager = new BotManager(
+                _gameContext.Single<IGameParking>(),
+                _gameContext.Single<IGameBuildings>(),
+                botFactory);
+
+            botManager.Initialize();
+            _gameContext.RegisterSingle<IGameBots>(botManager);
+        }
+
+        //private void RegisterCameraController()
+        //{
+        //    Camera editorCamera = Object.FindObjectOfType<Camera>();
+
+        //    IGameControl control = _appContext.Single<IAppAssetProvider>()
+        //        .Instantiate(AssetPath.GAME_CAMERA).GetComponent<CameraController>();
+
+        //    control.Initialize(_appContext.Single<IAppConfigProvider>().GetGameCameraConfig());
+
+        //    if (editorCamera != null)
+        //    {
+        //        Object.Destroy(editorCamera.gameObject);
+        //    }
+
+        //    _gameContext.RegisterSingle(control);
+        //}
+
+        //private void RegisterFogWar()
+        //{
+        //    IGameFogWar fogWar = Object.FindObjectOfType<FogController>();
+        //    fogWar.Initialize();
+        //    _gameContext.RegisterSingle(fogWar);
+        //}
+
+        private void OnLoadedOld()
         {
             IAppAssetProvider assets = _appContext.Single<IAppAssetProvider>();
             IAppRandomizer randomizer = _appContext.Single<IAppRandomizer>();
@@ -44,15 +138,15 @@ namespace FactoryBots.App.States
             Transform uiRoot = InitUIRoot();
             HomeButton homeButton = InitHomeButton(assets, uiRoot);
 
-            GameContext gameContext = new GameContext(
-                _appContext,
-                homeButton,
-                uiRoot,
-                _gameMode);
+            //GameContext gameContext = new GameContext(
+            //    _appContext,
+            //    homeButton,
+            //    uiRoot,
+            //    _gameMode);
 
-            GameController gameController = new GameController(gameContext);
+            //GameController gameController = new GameController(gameContext);
 
-            _appStateMachine.Enter<GameState, GameController>(gameController);
+            //_appStateMachine.Enter<GameState, GameController>(gameController);
         }
 
         private Transform InitUIRoot() =>
@@ -60,6 +154,19 @@ namespace FactoryBots.App.States
 
         private HomeButton InitHomeButton(IAppAssetProvider assets, Transform uiRoot) =>
             assets.Instantiate(AssetPath.HOME_BUTTON, uiRoot).GetComponent<HomeButton>();
+
+        private static TService GetGameServiceFromScene<TService>() where TService : MonoBehaviour, IGameService
+        {
+            TService gameService = Object.FindFirstObjectByType<TService>();
+
+            if (gameService == null)
+            {
+                string errorMessage = $"Error: Could not find any object of type {typeof(TService).Name} in the scene. Ensure that an object of this type is present and active in the scene.";
+                throw new NullReferenceException(errorMessage);
+            }
+
+            return gameService;
+        }
 
         public void Exit() { }
     }

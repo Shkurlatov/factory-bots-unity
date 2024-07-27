@@ -40,8 +40,8 @@ namespace FactoryBots.Menu
 
             SettingsData settingsData = await _data.LoadSettingsAsync();
 
-            _gameModeSlider.value = settingsData.GameMode;
-            _gameModeValue = settingsData.GameMode;
+            _gameModeSlider.value = settingsData.BotAmount;
+            _gameModeValue = settingsData.BotAmount;
             UpdateGameModeText();
         }
 
@@ -70,9 +70,7 @@ namespace FactoryBots.Menu
 
         private GameMode GetGameMode()
         {
-            int rows = _gameModeValue / 2;
-            int columns = _gameModeValue - rows;
-            return new GameMode(rows, columns);
+            return new GameMode(_gameModeValue);
         }
     }
 }

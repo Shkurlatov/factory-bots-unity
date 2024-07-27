@@ -33,6 +33,7 @@ namespace FactoryBots.App.States
         {
             _menuPanel.StartAction -= LaunchGame;
             _menuPanel.ExitAction -= QuitGame;
+            _menuPanel.gameObject.SetActive(false);
 
             _appStateMachine.Enter<LaunchGameState, GameMode>(gameMode);
         }

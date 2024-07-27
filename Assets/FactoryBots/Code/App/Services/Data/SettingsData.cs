@@ -4,11 +4,11 @@ namespace FactoryBots.App.Services.Progress
     [Serializable]
     public class SettingsData
     {
-        public int GameMode;
+        public int BotAmount;
 
-        public SettingsData(int gameMode)
+        public SettingsData(int botAmount)
         {
-            GameMode = gameMode;
+            BotAmount = botAmount;
         }
     }
 }

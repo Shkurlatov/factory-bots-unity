@@ -8,6 +8,8 @@ TagManager:
   - Walkable
   - Storage
   - Factory
+  - Parking
+  - UIRoot
   layers:
   - Default
   - TransparentFX

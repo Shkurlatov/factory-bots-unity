@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/FactoryBots/Scenes/Boot.unity
+    guid: 12514bf6b135acb40bd2e6a9c59107af
+  - enabled: 1
+    path: Assets/FactoryBots/Scenes/Menu.unity
+    guid: 87dc99ea37462e7498a0cd6c9d8440ce
+  - enabled: 1
+    path: Assets/FactoryBots/Scenes/Game.unity
+    guid: 8c27c5cd8967e8d49974eb0144c7471a
   m_configObjects: {}

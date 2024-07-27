@@ -19,8 +19,8 @@ namespace FactoryBots.Game.Services.Bots
         private readonly IGameBuildings _buildings;
         private readonly BotFactory _botFactory;
 
-        private List<Bot> _bots;
-        private Bot _selectedBot;
+        private List<IBot> _bots;
+        private IBot _selectedBot;
         private bool _isAlarm;
 
         public BotManager(IGameInput input, IGameParking parking, IGameBuildings buildings, BotFactory botFactory)
@@ -55,7 +55,7 @@ namespace FactoryBots.Game.Services.Bots
 
             if (targetObject.CompareTag(BOT_TAG))
             {
-                _selectedBot = targetObject.GetComponent<Bot>();
+                _selectedBot = targetObject.GetComponent<IBot>();
             }
         }
 
@@ -73,14 +73,14 @@ namespace FactoryBots.Game.Services.Bots
 
             if (targetObject.CompareTag(WALKABLE_TAG))
             {
-                _selectedBot.SetTargetPosition(targetPosition);
+                _selectedBot.MoveToPosition(targetPosition);
 
                 return;
             }
 
             if (targetObject.CompareTag(BUILDING_TAG))
             {
-                Debug.Log("Execute Building interaction.");
+                _selectedBot.MoveToBuilding(targetObject.GetComponent<IBuilding>());
             }
         }
 

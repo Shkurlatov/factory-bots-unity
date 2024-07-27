@@ -15,15 +15,16 @@ namespace FactoryBots.Game.Services.Bots
             _parent = new GameObject("Bots").transform;
         }
 
-        public List<Bot> CreateBots(List<Transform> botBasePoints)
+        public List<IBot> CreateBots(List<Transform> botBasePoints)
         {
-            List<Bot> bots = new List<Bot>();
+            List<IBot> bots = new List<IBot>();
 
-            foreach (Transform botBasePoint in botBasePoints)
+            for (int i = 0; i < botBasePoints.Count; i++)
             {
-                GameObject botBase = _assets.Instantiate(AssetPath.BOT_BASE, botBasePoint.position, botBasePoint);
+                GameObject botBase = _assets.Instantiate(AssetPath.BOT_BASE, botBasePoints[i].position, botBasePoints[i]);
 
-                Bot bot = _assets.Instantiate(AssetPath.BOT, botBasePoint.position, _parent).GetComponent<Bot>();
+                Bot bot = _assets.Instantiate(AssetPath.BOT, botBasePoints[i].position, _parent).GetComponent<Bot>();
+                bot.Initialize($"Bot {i + 1}", botBase);
                 bots.Add(bot);
             }
 

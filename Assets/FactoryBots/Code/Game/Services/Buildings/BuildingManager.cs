@@ -10,14 +10,14 @@ namespace FactoryBots.Game.Services.Buildings
 
         public void Initialize(BoxFactory boxFactory)
         {
-            foreach (StorageBuilding storage in _storages)
+            for (int i = 0; i < _storages.Count; i++)
             {
-                storage.Initialize(boxFactory);
+                _storages[i].Initialize($"Storage {i + 1}", boxFactory);
             }
-
-            foreach (FactoryBuilding factory in _factories)
+            
+            for (int i = 0; i < _factories.Count; i++)
             {
-                factory.Initialize(boxFactory);
+                _factories[i].Initialize($"Factory {i + 1}", boxFactory);
             }
         }
 

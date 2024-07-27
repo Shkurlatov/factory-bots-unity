@@ -9,7 +9,7 @@ namespace FactoryBots.App.States
         private readonly IAppStateMachine _appStateMachine;
         private readonly AppServiceContainer _appContext;
 
-        private GameController _gameController;
+        //private GameController _gameController;
         private GameServiceContainer _gameContext;
 
         public GameState(IAppStateMachine appStateMachine, AppServiceContainer appContext)
@@ -24,12 +24,12 @@ namespace FactoryBots.App.States
             //_gameContext.Single<IGameBuildings>().ClickOnTavernAction += OpenHeroShopScene;
         }
 
-        public void EnterOld(GameController gameController)
-        {
-            _gameController = gameController;
-            //_gameController.Initialize();
-            //_gameController.LeaveGameAction += ReturnToMenu;
-        }
+        //public void EnterOld(GameController gameController)
+        //{
+        //    _gameController = gameController;
+        //    _gameController.Initialize();
+        //    _gameController.LeaveGameAction += ReturnToMenu;
+        //}
 
         private void ReturnToMenu()
         {

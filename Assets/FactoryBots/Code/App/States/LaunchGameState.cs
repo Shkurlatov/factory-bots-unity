@@ -43,7 +43,6 @@ namespace FactoryBots.App.States
         }
         private void OnLoaded()
         {
-            //_citySpawnPoint = GameObject.FindGameObjectWithTag("CitySpawnPoint").transform;
             _gameContext = new GameServiceContainer();
 
             RegisterGameServices();
@@ -57,23 +56,6 @@ namespace FactoryBots.App.States
             RegisterParking();
             RegisterBuildings();
             RegisterBots();
-            //RegisterCameraController();
-            //RegisterFogWar();
-            //RegisterPathfinder();
-            //RegisterCitizens();
-            //await RegisterHeroes();
-            //await RegisterBuildings();
-            //await RegisterUnits();
-            //await RegisterArmies();
-            //RegisterExpeditions();
-            //RegisterOverlays();
-            //await RegisterCastles();
-            //await RegisterResourcePoints();
-            //await RegisterBarbarians();
-            //await RegisterBattles();
-            //await RegisterBuffs();
-            //await RegisterChat();
-            //RegisterCity();
         }
 
         private void RegisterInput()
@@ -107,6 +89,7 @@ namespace FactoryBots.App.States
                 _appContext.Single<IAppAssetProvider>());
 
             BotManager botManager = new BotManager(
+                _gameContext.Single<IGameInput>(),
                 _gameContext.Single<IGameParking>(),
                 _gameContext.Single<IGameBuildings>(),
                 botFactory);
@@ -114,30 +97,6 @@ namespace FactoryBots.App.States
             botManager.Initialize();
             _gameContext.RegisterSingle<IGameBots>(botManager);
         }
-
-        //private void RegisterCameraController()
-        //{
-        //    Camera editorCamera = Object.FindObjectOfType<Camera>();
-
-        //    IGameControl control = _appContext.Single<IAppAssetProvider>()
-        //        .Instantiate(AssetPath.GAME_CAMERA).GetComponent<CameraController>();
-
-        //    control.Initialize(_appContext.Single<IAppConfigProvider>().GetGameCameraConfig());
-
-        //    if (editorCamera != null)
-        //    {
-        //        Object.Destroy(editorCamera.gameObject);
-        //    }
-
-        //    _gameContext.RegisterSingle(control);
-        //}
-
-        //private void RegisterFogWar()
-        //{
-        //    IGameFogWar fogWar = Object.FindObjectOfType<FogController>();
-        //    fogWar.Initialize();
-        //    _gameContext.RegisterSingle(fogWar);
-        //}
 
         private void OnLoadedOld()
         {
@@ -148,16 +107,6 @@ namespace FactoryBots.App.States
 
             Transform uiRoot = InitUIRoot();
             HomeButton homeButton = InitHomeButton(assets, uiRoot);
-
-            //GameContext gameContext = new GameContext(
-            //    _appContext,
-            //    homeButton,
-            //    uiRoot,
-            //    _gameMode);
-
-            //GameController gameController = new GameController(gameContext);
-
-            //_appStateMachine.Enter<GameState, GameController>(gameController);
         }
 
         private Transform InitUIRoot() =>

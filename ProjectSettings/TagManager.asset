@@ -6,10 +6,9 @@ TagManager:
   tags:
   - Bot
   - Walkable
-  - Storage
-  - Factory
   - Parking
   - UIRoot
+  - Building
   layers:
   - Default
   - TransparentFX

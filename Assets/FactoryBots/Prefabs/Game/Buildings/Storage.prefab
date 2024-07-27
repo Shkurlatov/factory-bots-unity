@@ -91,7 +91,7 @@ PrefabInstance:
     - target: {fileID: 6568528938124642029, guid: f0470b4eaa3feeb4b82b4efb3cc1c4eb,
         type: 3}
       propertyPath: m_TagString
-      value: Storage
+      value: Building
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

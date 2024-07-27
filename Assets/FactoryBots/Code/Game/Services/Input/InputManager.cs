@@ -1,4 +1,4 @@
-﻿using FactoryBots.Game.Services.Bots;
+﻿using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,7 +10,8 @@ namespace FactoryBots.Game.Services.Input
         private readonly Mouse _mouse;
         private readonly InputActions _inputActions;
 
-        private Bot _selectedBot;
+        public event Action<GameObject> SelectPerformedAction;
+        public event Action<GameObject, Vector3> ExecutePerformedAction;
 
         public InputManager(Raycaster raycaster)
         {
@@ -28,29 +29,15 @@ namespace FactoryBots.Game.Services.Input
 
         private void OnSelectActionPerformed(InputAction.CallbackContext context)
         {
-            if (_raycaster.TryGetRaycastTarget(_mouse.position.ReadValue(), out GameObject raycastTarget))
-            {
-                if (raycastTarget.CompareTag("Bot"))
-                {
-                    _selectedBot = raycastTarget.GetComponent<Bot>();
-                    Debug.Log(raycastTarget.name);
-                }
-                else
-                {
-                    _selectedBot = null;
-                }
-            }
+            GameObject raycastTarget = _raycaster.GetRaycastTarget(_mouse.position.ReadValue());
+            SelectPerformedAction?.Invoke(raycastTarget);
         }
 
         private void OnExecuteActionPerformed(InputAction.CallbackContext context)
         {
             if (_raycaster.TryGetRaycastTargetWithPosition(_mouse.position.ReadValue(), out GameObject raycastTarget, out Vector3 hitPosition))
             {
-                if (_selectedBot != null && raycastTarget.CompareTag("Walkable"))
-                {
-                    _selectedBot.SetTargetPosition(hitPosition);
-                    Debug.Log(hitPosition);
-                }
+                ExecutePerformedAction?.Invoke(raycastTarget, hitPosition);
             }
         }
 

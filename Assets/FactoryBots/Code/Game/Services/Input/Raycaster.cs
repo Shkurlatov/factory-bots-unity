@@ -12,6 +12,17 @@ namespace FactoryBots.Game.Services.Input
             _camera = camera;
         }
 
+        public GameObject GetRaycastTarget(Vector3 pointerPosition)
+        {
+            Ray ray = _camera.ScreenPointToRay(pointerPosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, _maxRaycastDistance))
+            {
+                return hit.collider.gameObject;
+            }
+
+            return null;
+        }
+        
         public bool TryGetRaycastTarget(Vector3 pointerPosition, out GameObject raycastTarget)
         {
             Ray ray = _camera.ScreenPointToRay(pointerPosition);

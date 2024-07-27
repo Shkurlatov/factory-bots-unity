@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using FactoryBots.Game.Services.Bots;
+using UnityEngine;
 
 namespace FactoryBots.Game.Services.Buildings
 {
-    public abstract class BaseBuilding : MonoBehaviour
+    public abstract class BaseBuilding : MonoBehaviour, IBuilding
     {
         protected BoxFactory BoxFactory { get; private set; }
 
@@ -10,5 +11,7 @@ namespace FactoryBots.Game.Services.Buildings
         {
             BoxFactory = boxFactory;
         }
+
+        public abstract void Interact(Bot bot);
     }
 }

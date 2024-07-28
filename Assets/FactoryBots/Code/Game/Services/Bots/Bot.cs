@@ -62,6 +62,8 @@ namespace FactoryBots.Game.Services.Bots
             {
                 _hasTarget = false;
                 _navMeshAgent.isStopped = true;
+                _animator.Play("Bot_Idle");
+
                 TargetReachedAction?.Invoke();
 
                 if (_targetBuilding != null && _isOnDelivery)
@@ -71,10 +73,10 @@ namespace FactoryBots.Game.Services.Bots
             }
         }
 
-        public void Select() => 
+        public void Select() =>
             _highlight.SetActive(true);
 
-        public void Unselect() => 
+        public void Unselect() =>
             _highlight.SetActive(false);
 
         public void MoveToPosition(Vector3 targetPosition)
@@ -85,6 +87,7 @@ namespace FactoryBots.Game.Services.Bots
             _isOnDelivery = false;
             _hasTarget = true;
             _navMeshAgent.isStopped = false;
+            _animator.Play("Bot_Move");
         }
 
         public void MoveToBuilding(IBuilding targetBuilding)
@@ -94,16 +97,18 @@ namespace FactoryBots.Game.Services.Bots
             _isOnDelivery = true;
             _hasTarget = true;
             _navMeshAgent.isStopped = false;
+            _animator.Play("Bot_Move");
         }
-        
+
         public void MoveToBase()
         {
             _navMeshAgent.destination = _basePoint.position;
             _isOnDelivery = false;
             _hasTarget = true;
             _navMeshAgent.isStopped = false;
+            _animator.Play("Bot_Move");
         }
-                
+
         public void ReturnToTarget()
         {
             if (_targetBuilding != null)
@@ -121,12 +126,12 @@ namespace FactoryBots.Game.Services.Bots
             {
                 return false;
             }
-            
+
             if (_isOnDelivery == false)
             {
                 return false;
             }
-            
+
             if (_box != null)
             {
                 return false;

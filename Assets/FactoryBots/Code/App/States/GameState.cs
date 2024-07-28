@@ -1,6 +1,6 @@
 ﻿using FactoryBots.App.Services;
-using FactoryBots.Game;
 using FactoryBots.Game.Services;
+using FactoryBots.Game.Services.Overlay;
 
 namespace FactoryBots.App.States
 {
@@ -9,7 +9,6 @@ namespace FactoryBots.App.States
         private readonly IAppStateMachine _appStateMachine;
         private readonly AppServiceContainer _appContext;
 
-        //private GameController _gameController;
         private GameServiceContainer _gameContext;
 
         public GameState(IAppStateMachine appStateMachine, AppServiceContainer appContext)
@@ -21,31 +20,17 @@ namespace FactoryBots.App.States
         public void Enter(GameServiceContainer gameContext)
         {
             _gameContext = gameContext;
-            //_gameContext.Single<IGameBuildings>().ClickOnTavernAction += OpenHeroShopScene;
+            _gameContext.Single<IGameOverlay>().LeavePanel.LeaveGameAction += ReturnToMenu;
         }
-
-        //public void EnterOld(GameController gameController)
-        //{
-        //    _gameController = gameController;
-        //    _gameController.Initialize();
-        //    _gameController.LeaveGameAction += ReturnToMenu;
-        //}
 
         private void ReturnToMenu()
         {
-            //_gameController.LeaveGameAction -= ReturnToMenu;
-
+            _gameContext.Single<IGameOverlay>().LeavePanel.LeaveGameAction -= ReturnToMenu;
             _appStateMachine.Enter<LaunchMenuState>();
         }
 
         public void Exit()
         {
-            //if (_gameController != null)
-            //{
-            //    _gameController.Cleanup();
-            //    _gameController = null;
-            //}
-
             if (_gameContext != null)
             {
                 _gameContext.Cleanup();

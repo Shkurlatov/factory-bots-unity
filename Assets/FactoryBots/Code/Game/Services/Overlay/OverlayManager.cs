@@ -14,6 +14,7 @@ namespace FactoryBots.Game.Services.Overlay
 
         public void Initialize()
         {
+            _leavePanel.Initialize();
             _botStatusPanel.Initialize();
             _alarmPanel.Initialize();
         }

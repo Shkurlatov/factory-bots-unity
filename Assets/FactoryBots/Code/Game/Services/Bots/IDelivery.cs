@@ -4,8 +4,7 @@ namespace FactoryBots.Game.Services.Bots
 {
     public interface IDelivery
     {
-        string TargetId { get; }
-
-        bool TrySetBox(Box box);
+        bool TrySetBox(Box box, string buildingId);
+        bool TryRetrieveBox(out Box box);
     }
 }

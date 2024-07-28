@@ -152,6 +152,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1482398773155384220}
   m_SourcePrefab: {fileID: 100100000, guid: f0470b4eaa3feeb4b82b4efb3cc1c4eb, type: 3}
+--- !u!4 &1163643886820093942 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 529893361099675786, guid: f0470b4eaa3feeb4b82b4efb3cc1c4eb,
+    type: 3}
+  m_PrefabInstance: {fileID: 1692395542393943932}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1974270297079454815 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 872181720934181667, guid: f0470b4eaa3feeb4b82b4efb3cc1c4eb,
@@ -178,6 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interactionPoint: {fileID: 7422152257978355378}
   _deliveryPoint: {fileID: 1974270297079454815}
+  _insidePoint: {fileID: 1163643886820093942}
 --- !u!4 &7422152257978355378 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8105442356497594830, guid: f0470b4eaa3feeb4b82b4efb3cc1c4eb,

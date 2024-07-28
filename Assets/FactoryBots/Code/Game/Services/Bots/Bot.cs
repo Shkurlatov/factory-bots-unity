@@ -6,8 +6,9 @@ namespace FactoryBots.Game.Services.Bots
 {
     public class Bot : MonoBehaviour, IBot, IDelivery
     {
+        [SerializeField] private Animator _animator;
         [SerializeField] private NavMeshAgent _navMeshAgent;
-        [SerializeField] private Transform _boxHolderPoint;
+        [SerializeField] private Transform _cargoPoint;
 
         private string _id;
         private Transform _basePoint;
@@ -19,13 +20,21 @@ namespace FactoryBots.Game.Services.Bots
 
         public string Status => GetStatus();
 
-        public string TargetId => GetTargetId();
-
         public void Initialize(string botId, GameObject botBase)
         {
             _id = botId;
             _basePoint = botBase.transform;
             _targetPosition = botBase.transform.position;
+
+            AnimatorClipInfo[] clipInfo = _animator.GetCurrentAnimatorClipInfo(0);
+
+            if (clipInfo.Length > 0)
+            {
+                float clipLength = clipInfo[0].clip.length;
+                float randomStartTime = Random.Range(0f, clipLength);
+
+                _animator.Play(clipInfo[0].clip.name, 0, randomStartTime / clipLength);
+            }
         }
 
         private void Update()
@@ -43,39 +52,91 @@ namespace FactoryBots.Game.Services.Bots
             if (_navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
             {
                 _hasTarget = false;
-                Debug.Log("Reached destination.");
+                _navMeshAgent.isStopped = true;
+
+                if (_targetBuilding != null)
+                {
+                    _targetBuilding.Interact(this);
+                }
             }
         }
 
         public void MoveToPosition(Vector3 targetPosition)
         {
-            _navMeshAgent.destination = targetPosition;
+            _targetBuilding = null;
+            _targetPosition = targetPosition;
+            _navMeshAgent.destination = _targetPosition;
             _hasTarget = true;
+            _navMeshAgent.isStopped = false;
         }
 
         public void MoveToBuilding(IBuilding targetBuilding)
         {
-            _navMeshAgent.destination = targetBuilding.InteractionPosition;
+            _targetBuilding = targetBuilding;
+            _navMeshAgent.destination = _targetBuilding.InteractionPosition;
             _hasTarget = true;
+            _navMeshAgent.isStopped = false;
         }
 
-        public bool TrySetBox(Box box)
+        public bool TrySetBox(Box box, string buildingId)
         {
-            return false;
+            if (_hasTarget == true)
+            {
+                return false;
+            }
+            
+            if (_box != null)
+            {
+                return false;
+            }
+
+            if (CheckBuildingId(buildingId) == false)
+            {
+                return false;
+            }
+
+            SetBox(box);
+            return true;
+        }
+
+        public bool TryRetrieveBox(out Box box)
+        {
+            box = _box;
+
+            if (box == null)
+            {
+                return false;
+            }
+
+            _box = null;
+            return true;
+        }
+
+        private void SetBox(Box box)
+        {
+            _box = box;
+            _box.transform.SetParent(_cargoPoint);
+            _box.transform.SetPositionAndRotation(_cargoPoint.position, _cargoPoint.rotation);
+        }
+
+        private bool CheckBuildingId(string buildingId)
+        {
+            if (_targetBuilding == null)
+            {
+                return false;
+            }
+
+            return _targetBuilding.Id == buildingId;
         }
 
         private string GetStatus()
         {
-            return _targetBuilding == null
-                ? $"{_id} => (X: {(int)_targetPosition.x}, Y: {(int)_targetPosition.z})"
-                : $"{_id} => {_targetBuilding.Id}";
-        }
+            if (_targetBuilding == null)
+            {
+                return $"{_id} => (X: {(int)_targetPosition.x}, Y: {(int)_targetPosition.z})";
+            }
 
-        private string GetTargetId()
-        {
-            return _targetBuilding == null
-                ? string.Empty
-                : _targetBuilding.Id;
+            return $"{_id} => {_targetBuilding.Id}";
         }
     }
 }

@@ -8,6 +8,6 @@ namespace FactoryBots.Game.Services.Buildings
         string Id { get; }
         Vector3 InteractionPosition { get; }
 
-        void Interact(Bot bot);
+        void Interact(IDelivery delivery);
     }
 }

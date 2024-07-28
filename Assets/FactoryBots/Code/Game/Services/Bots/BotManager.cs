@@ -1,7 +1,9 @@
-﻿using FactoryBots.Game.Services.Buildings;
+﻿using FactoryBots.Game.Services.Bots.Components;
+using FactoryBots.Game.Services.Buildings;
 using FactoryBots.Game.Services.Input;
 using FactoryBots.Game.Services.Overlay;
 using FactoryBots.Game.Services.Parking;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,10 +18,9 @@ namespace FactoryBots.Game.Services.Bots
         private readonly IGameOverlay _overlay;
         private readonly IGameInput _input;
         private readonly IGameParking _parking;
-        private readonly IGameBuildings _buildings;
         private readonly BotFactory _botFactory;
 
-        private List<IBot> _bots;
+        private Dictionary<string, IBot> _bots;
         private IBot _selectedBot;
         private bool _isAlarm;
 
@@ -33,7 +34,7 @@ namespace FactoryBots.Game.Services.Bots
 
         public void Initialize()
         {
-            _bots = _botFactory.CreateBots(_parking.BotBasePoints);
+            _bots = _botFactory.CreateBots(_parking.BotBasePoints, OnBotReachedTarget);
             _selectedBot = null;
             _isAlarm = false;
 
@@ -56,9 +57,17 @@ namespace FactoryBots.Game.Services.Bots
 
             if (targetObject.CompareTag(BOT_TAG))
             {
-                _selectedBot = targetObject.GetComponent<IBot>();
-                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
-                _selectedBot.Select();
+                try
+                {
+                    string botId = targetObject.GetComponent<BotRegistry>().Id;
+                    _selectedBot = _bots[botId];
+                    _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
+                    _selectedBot.Select();
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogError(exception.Message);
+                }
             }
         }
 
@@ -76,7 +85,7 @@ namespace FactoryBots.Game.Services.Bots
 
             if (targetObject.CompareTag(WALKABLE_TAG))
             {
-                _selectedBot.MoveToPosition(targetPosition);
+                _selectedBot.ExecutePositionCommand(targetPosition);
                 _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
 
                 return;
@@ -84,7 +93,7 @@ namespace FactoryBots.Game.Services.Bots
 
             if (targetObject.CompareTag(BUILDING_TAG))
             {
-                _selectedBot.MoveToBuilding(targetObject.GetComponent<IBuilding>());
+                _selectedBot.ExecuteDeliveryCommand(targetObject.GetComponent<IBuilding>());
                 _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
             }
         }
@@ -135,25 +144,35 @@ namespace FactoryBots.Game.Services.Bots
 
         private void SendAllBotsToBase()
         {
-            foreach (IBot bot in _bots)
+            foreach (IBot bot in _bots.Values)
             {
-                bot.MoveToBase();
+                bot.ExecuteBaseCommand();
+            }
+
+            if (_selectedBot != null)
+            {
+                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
             }
         }
 
         private void ReturnAllBotsToTarget()
         {
-            foreach (IBot bot in _bots)
+            foreach (IBot bot in _bots.Values)
             {
-                bot.ReturnToTarget();
+                bot.ExecutePreviousCommand();
+            }
+
+            if (_selectedBot != null)
+            {
+                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
             }
         }
 
         private bool IsAllBotsCloseToBase()
         {
-            foreach (IBot bot in _bots)
+            foreach (IBot bot in _bots.Values)
             {
-                if (bot.IsCloseToBase == false)
+                if (bot.IsCloseToBase() == false)
                 {
                     return false;
                 }
@@ -171,11 +190,6 @@ namespace FactoryBots.Game.Services.Bots
             _input.ExecutePerformedAction += OnExecutePerformed;
 
             _parking.GateOpenedAction += OnGateOpened;
-
-            foreach (IBot bot in _bots)
-            {
-                bot.TargetReachedAction += OnBotReachedTarget;
-            }
         }
         
         private void UnsubscribeFromEvents()
@@ -187,16 +201,18 @@ namespace FactoryBots.Game.Services.Bots
             _input.ExecutePerformedAction -= OnExecutePerformed;
 
             _parking.GateOpenedAction -= OnGateOpened;
-
-            foreach (IBot bot in _bots)
-            {
-                bot.TargetReachedAction -= OnBotReachedTarget;
-            }
         }
 
         public void Cleanup()
         {
             UnsubscribeFromEvents();
+
+            foreach (IBot bot in _bots.Values)
+            {
+                bot.Cleanup();
+            }
+
+            _bots.Clear();
         }
     }
 }

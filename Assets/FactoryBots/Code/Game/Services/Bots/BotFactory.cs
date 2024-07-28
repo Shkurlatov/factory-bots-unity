@@ -1,4 +1,6 @@
 ﻿using FactoryBots.App.Services.Assets;
+using FactoryBots.Game.Services.Bots.Components;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,20 +17,38 @@ namespace FactoryBots.Game.Services.Bots
             _parent = new GameObject("Bots").transform;
         }
 
-        public List<IBot> CreateBots(List<Transform> botBasePoints)
+        public Dictionary<string, IBot> CreateBots(List<Transform> botBasePoints, Action onBotReachedTarget)
         {
-            List<IBot> bots = new List<IBot>();
+            Dictionary<string, IBot> bots = new Dictionary<string, IBot>(botBasePoints.Count);
 
             for (int i = 0; i < botBasePoints.Count; i++)
             {
-                GameObject botBase = _assets.Instantiate(AssetPath.BOT_BASE, botBasePoints[i].position, botBasePoints[i]);
-
-                Bot bot = _assets.Instantiate(AssetPath.BOT, botBasePoints[i].position, _parent).GetComponent<Bot>();
-                bot.Initialize($"Bot {i + 1}", botBase);
-                bots.Add(bot);
+                string id = $"Bot {i + 1}";
+                Bot bot = CreateBot(id, botBasePoints[i], onBotReachedTarget);
+                bots.Add(id, bot);
             }
 
             return bots;
+        }
+
+        private Bot CreateBot(string id, Transform botBasePoint, Action onBotReachedTarget)
+        {
+            GameObject botObject = _assets.Instantiate(AssetPath.BOT, botBasePoint.position, _parent);
+            GameObject botBase = _assets.Instantiate(AssetPath.BOT_BASE, botBasePoint.position, botBasePoint);
+            BotRegistry botRegistry = botObject.GetComponent<BotRegistry>();
+            BotAnimator botAnimator = botObject.GetComponent<BotAnimator>();
+            BotMover botMover = botObject.GetComponent<BotMover>();
+            BotEffects botEffects = botObject.GetComponent<BotEffects>();
+            BotCargo botCargo = botObject.GetComponent<BotCargo>();
+
+            botRegistry.Initialize(id);
+            botAnimator.Initialize();
+            botMover.Initialize();
+            botEffects.Initialize();
+
+            BotComponents botComponents = new BotComponents(botObject, botBase.transform, botRegistry, botAnimator, botMover, botEffects, botCargo);
+            Bot bot = new Bot(botComponents, onBotReachedTarget);
+            return bot;
         }
     }
 }

@@ -1,189 +1,174 @@
+using FactoryBots.Game.Services.Bots.Commands;
+using FactoryBots.Game.Services.Bots.Components;
 using FactoryBots.Game.Services.Buildings;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using Random = UnityEngine.Random;
+using Object = UnityEngine.Object;
 
 namespace FactoryBots.Game.Services.Bots
 {
-    public class Bot : MonoBehaviour, IBot, IDelivery
+    public class Bot : IBot, IDelivery
     {
-        [SerializeField] private Animator _animator;
-        [SerializeField] private GameObject _highlight;
-        [SerializeField] private NavMeshAgent _navMeshAgent;
-        [SerializeField] private Transform _cargoPoint;
-
-        private string _id;
-        private Transform _basePoint;
-        private IBuilding _targetBuilding;
-        private Vector3 _targetPosition;
-        private bool _hasTarget;
-        private bool _isOnDelivery;
-
-        private Box _box;
+        private readonly BotComponents _components;
+        private readonly Stack<IBotCommand> _commands;
+        private readonly float _closeToBaseDistance;
 
         public string Status => GetStatus();
 
-        public bool IsCloseToBase => Vector3.Distance(transform.position, _basePoint.position) < 3.0f;
+        private Action TargetReachedAction;
 
-        public event Action TargetReachedAction;
-
-        public void Initialize(string botId, GameObject botBase)
+        public Bot(BotComponents components, Action onTargetReached)
         {
-            _id = botId;
-            _basePoint = botBase.transform;
-            _targetPosition = botBase.transform.position;
-            _highlight.SetActive(false);
+            _components = components;
+            _commands = new Stack<IBotCommand>();
+            _closeToBaseDistance = 3.0f;
 
-            AnimatorClipInfo[] clipInfo = _animator.GetCurrentAnimatorClipInfo(0);
+            TargetReachedAction = onTargetReached;
 
-            if (clipInfo.Length > 0)
-            {
-                float clipLength = clipInfo[0].clip.length;
-                float randomStartTime = Random.Range(0f, clipLength);
-
-                _animator.Play(clipInfo[0].clip.name, 0, randomStartTime / clipLength);
-            }
+            _components.Mover.TargetReachedAction += OnTargetReached;
         }
 
-        private void Update()
+        public bool IsCloseToBase()
         {
-            if (_hasTarget == false)
-            {
-                return;
-            }
-
-            if (_navMeshAgent.pathPending)
-            {
-                return;
-            }
-
-            if (_navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
-            {
-                _hasTarget = false;
-                _navMeshAgent.isStopped = true;
-                _animator.Play("Bot_Idle");
-
-                TargetReachedAction?.Invoke();
-
-                if (_targetBuilding != null && _isOnDelivery)
-                {
-                    _targetBuilding.Interact(this);
-                }
-            }
+            float distanceToBase = Vector3.Distance(_components.BotObject.transform.position, _components.BasePoint.position);
+            return distanceToBase < _closeToBaseDistance;
         }
 
         public void Select() =>
-            _highlight.SetActive(true);
+            _components.Effects.ToggleHighlight(true);
 
         public void Unselect() =>
-            _highlight.SetActive(false);
+            _components.Effects.ToggleHighlight(false);
 
-        public void MoveToPosition(Vector3 targetPosition)
+        public void ExecuteBaseCommand()
         {
-            _targetBuilding = null;
-            _targetPosition = targetPosition;
-            _navMeshAgent.destination = _targetPosition;
-            _isOnDelivery = false;
-            _hasTarget = true;
-            _navMeshAgent.isStopped = false;
-            _animator.Play("Bot_Move");
-        }
-
-        public void MoveToBuilding(IBuilding targetBuilding)
-        {
-            _targetBuilding = targetBuilding;
-            _navMeshAgent.destination = _targetBuilding.InteractionPosition;
-            _isOnDelivery = true;
-            _hasTarget = true;
-            _navMeshAgent.isStopped = false;
-            _animator.Play("Bot_Move");
-        }
-
-        public void MoveToBase()
-        {
-            _navMeshAgent.destination = _basePoint.position;
-            _isOnDelivery = false;
-            _hasTarget = true;
-            _navMeshAgent.isStopped = false;
-            _animator.Play("Bot_Move");
-        }
-
-        public void ReturnToTarget()
-        {
-            if (_targetBuilding != null)
+            if (_commands.Count > 0 && _commands.Peek() is BotBaseCommand)
             {
-                MoveToBuilding(_targetBuilding);
                 return;
             }
 
-            MoveToPosition(_targetPosition);
+            IBotCommand command = new BotBaseCommand();
+            _commands.Push(command);
+
+            MoveToTargetPosition(_components.BasePoint.position);
+        }
+
+        public void ExecutePositionCommand(Vector3 targetPosition)
+        {
+            if (_commands.Count > 0)
+            {
+                _commands.Pop();
+            }
+
+            IBotCommand command = new BotPositionCommand(targetPosition);
+            _commands.Push(command);
+
+            MoveToTargetPosition(targetPosition);
+        }
+
+        public void ExecuteDeliveryCommand(IBuilding targetBuilding)
+        {
+            if (_commands.Count > 0)
+            {
+                _commands.Pop();
+            }
+
+            IBotCommand command = new BotDeliveryCommand(targetBuilding);
+            _commands.Push(command);
+
+            MoveToTargetPosition(targetBuilding.InteractionPosition);
+        }
+
+        public void ExecutePreviousCommand()
+        {
+            if (_commands.Count == 0)
+            {
+                return;
+            }
+
+            _commands.Pop();
+
+            if (_commands.Count == 0)
+            {
+                return;
+            }
+
+            IBotCommand command = _commands.Peek();
+            command.SetTargetReached(false);
+
+            switch (command)
+            {
+                case BotBaseCommand:
+                    MoveToTargetPosition(_components.BasePoint.position);
+                    break;
+                case BotPositionCommand positionCommand:
+                    MoveToTargetPosition(positionCommand.TargetPosition);
+                    break;
+                case BotDeliveryCommand deliveryCommand:
+                    MoveToTargetPosition(deliveryCommand.TargetBuilding.InteractionPosition);
+                    break;
+            }
         }
 
         public bool TrySetBox(Box box, string buildingId)
         {
-            if (_hasTarget)
+            if (_commands.Count == 0 || _commands.Peek().TargetId != buildingId || _commands.Peek().IsTargetReached == false)
             {
                 return false;
             }
 
-            if (_isOnDelivery == false)
+            if (_components.Cargo.IsLoaded)
             {
                 return false;
             }
 
-            if (_box != null)
-            {
-                return false;
-            }
-
-            if (CheckBuildingId(buildingId) == false)
-            {
-                return false;
-            }
-
-            SetBox(box);
+            _components.Cargo.SetBox(box);
             return true;
         }
 
-        public bool TryRetrieveBox(out Box box)
+        public bool TryRetrieveBox(out Box box) =>
+            _components.Cargo.TryRetrieveBox(out box);
+
+        private void MoveToTargetPosition(Vector3 targetPosition)
         {
-            box = _box;
-
-            if (box == null)
-            {
-                return false;
-            }
-
-            _box = null;
-            return true;
-        }
-
-        private void SetBox(Box box)
-        {
-            _box = box;
-            _box.transform.SetParent(_cargoPoint);
-            _box.transform.SetPositionAndRotation(_cargoPoint.position, _cargoPoint.rotation);
-        }
-
-        private bool CheckBuildingId(string buildingId)
-        {
-            if (_targetBuilding == null)
-            {
-                return false;
-            }
-
-            return _targetBuilding.Id == buildingId;
+            _components.Animator.PlayMove();
+            _components.Mover.MoveToTargetPosition(targetPosition);
         }
 
         private string GetStatus()
         {
-            if (_targetBuilding == null)
+            string target = string.Empty;
+
+            if (_commands.Count > 0)
             {
-                return $"{_id} - (X: {(int)_targetPosition.x}, Y: {(int)_targetPosition.z})";
+                target = $" - {_commands.Peek().TargetId}";
             }
 
-            return $"{_id} - {_targetBuilding.Id}";
+            return $"{_components.Registry.Id}{target}";
+        }
+
+        private void OnTargetReached()
+        {
+            _components.Animator.PlayIdle();
+
+            IBotCommand command = _commands.Peek();
+            command.SetTargetReached(true);
+
+            if (command is BotDeliveryCommand deliveryCommand)
+            {
+                deliveryCommand.TargetBuilding.Interact(this);
+            }
+
+            TargetReachedAction?.Invoke();
+        }
+
+        public void Cleanup()
+        {
+            _components.Mover.TargetReachedAction -= OnTargetReached;
+            Object.Destroy(_components.BotObject);
+
+            TargetReachedAction = null;
         }
     }
 }

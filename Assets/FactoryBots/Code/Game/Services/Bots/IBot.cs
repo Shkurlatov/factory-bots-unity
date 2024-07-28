@@ -1,5 +1,4 @@
 ﻿using FactoryBots.Game.Services.Buildings;
-using System;
 using UnityEngine;
 
 namespace FactoryBots.Game.Services.Bots
@@ -7,15 +6,14 @@ namespace FactoryBots.Game.Services.Bots
     public interface IBot
     {
         string Status { get; }
-        bool IsCloseToBase { get; }
 
-        event Action TargetReachedAction;
-
+        bool IsCloseToBase();
         void Select();
         void Unselect();
-        void MoveToPosition(Vector3 targetPosition);
-        void MoveToBuilding(IBuilding targetBuilding);
-        void MoveToBase();
-        void ReturnToTarget();
+        void ExecuteBaseCommand();
+        void ExecutePositionCommand(Vector3 targetPosition);
+        void ExecuteDeliveryCommand(IBuilding targetBuilding);
+        void ExecutePreviousCommand();
+        void Cleanup();
     }
 }

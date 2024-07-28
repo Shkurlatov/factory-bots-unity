@@ -10,7 +10,6 @@ namespace FactoryBots.Game.Services.Parking
         List<Transform> BotBasePoints { get; }
 
         event Action GateOpenedAction;
-        event Action GateClosedAction;
 
         void CloseGate();
         void OpenGate();

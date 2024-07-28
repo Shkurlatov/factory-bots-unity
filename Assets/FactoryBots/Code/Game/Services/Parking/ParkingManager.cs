@@ -22,7 +22,6 @@ namespace FactoryBots.Game.Services.Parking
         public List<Transform> BotBasePoints => _botBasePoints.ToList();
 
         public event Action GateOpenedAction;
-        public event Action GateClosedAction;
 
         public void Initialize()
         {
@@ -36,7 +35,7 @@ namespace FactoryBots.Game.Services.Parking
                 StopCoroutine(_currentGateCoroutine);
             }
 
-            _currentGateCoroutine = StartCoroutine(RotateGateTo(_gateMaxAngle, OnGateOpenComplete));
+            _currentGateCoroutine = StartCoroutine(RotateGateTo(_gateMaxAngle, isOpening: true));
         }
 
         public void CloseGate()
@@ -48,10 +47,10 @@ namespace FactoryBots.Game.Services.Parking
                 StopCoroutine(_currentGateCoroutine);
             }
 
-            _currentGateCoroutine = StartCoroutine(RotateGateTo(_gateMinAngle, OnGateCloseComplete));
+            _currentGateCoroutine = StartCoroutine(RotateGateTo(_gateMinAngle));
         }
 
-        private IEnumerator RotateGateTo(float targetAngle, Action onComplete)
+        private IEnumerator RotateGateTo(float targetAngle, bool isOpening = false)
         {
             Quaternion startRotation = _gate.transform.rotation;
             Quaternion endRotation = Quaternion.Euler(targetAngle, startRotation.eulerAngles.y, startRotation.eulerAngles.z);
@@ -71,18 +70,12 @@ namespace FactoryBots.Game.Services.Parking
             }
 
             _gate.transform.rotation = endRotation;
-            onComplete?.Invoke();
-        }
 
-        private void OnGateOpenComplete()
-        {
-            IsGateOpen = true;
-            GateOpenedAction?.Invoke();
-        }
-        
-        private void OnGateCloseComplete()
-        {
-            GateClosedAction?.Invoke();
+            if (isOpening)
+            {
+                IsGateOpen = true;
+                GateOpenedAction?.Invoke();
+            }
         }
 
         public void Cleanup()

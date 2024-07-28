@@ -3,7 +3,6 @@ using FactoryBots.App.Services;
 using FactoryBots.App.Services.Assets;
 using FactoryBots.App.Services.Audio;
 using FactoryBots.App.Services.Progress;
-using FactoryBots.App.Services.Randomizer;
 
 namespace FactoryBots.App.States
 {
@@ -35,7 +34,6 @@ namespace FactoryBots.App.States
         private void RegisterAppServices()
         {
             IAppAssetProvider assets = RegisterAssetProvider();
-            RegisterRandomizer();
             RegisterData();
             RegisterAudio(assets);
         }
@@ -47,9 +45,6 @@ namespace FactoryBots.App.States
             return assets;
         }
 
-        private void RegisterRandomizer() =>
-            _appContext.RegisterSingle<IAppRandomizer>(new SystemRandomizer());
-        
         private void RegisterData() =>
             _appContext.RegisterSingle<IAppData>(new PlayerPrefsSaveLoadManager());
 

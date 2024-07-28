@@ -1,9 +1,6 @@
 ﻿using FactoryBots.App.Bootstrap;
 using FactoryBots.App.Services;
 using FactoryBots.App.Services.Assets;
-using FactoryBots.App.Services.Audio;
-using FactoryBots.App.Services.Progress;
-using FactoryBots.App.Services.Randomizer;
 using FactoryBots.Game;
 using FactoryBots.Game.Services;
 using FactoryBots.Game.Services.Bots;
@@ -106,23 +103,6 @@ namespace FactoryBots.App.States
             botManager.Initialize();
             _gameContext.RegisterSingle<IGameBots>(botManager);
         }
-
-        private void OnLoadedOld()
-        {
-            IAppAssetProvider assets = _appContext.Single<IAppAssetProvider>();
-            IAppRandomizer randomizer = _appContext.Single<IAppRandomizer>();
-            IAppData data = _appContext.Single<IAppData>();
-            IAppAudio audio = _appContext.Single<IAppAudio>();
-
-            Transform uiRoot = InitUIRoot();
-            //HomeButton homeButton = InitHomeButton(assets, uiRoot);
-        }
-
-        private Transform InitUIRoot() =>
-            GameObject.FindGameObjectWithTag(UI_ROOT_TAG).transform;
-
-        //private HomeButton InitHomeButton(IAppAssetProvider assets, Transform uiRoot) =>
-        //    assets.Instantiate(AssetPath.HOME_BUTTON, uiRoot).GetComponent<HomeButton>();
 
         private static TService GetGameServiceFromScene<TService>() where TService : MonoBehaviour, IGameService
         {

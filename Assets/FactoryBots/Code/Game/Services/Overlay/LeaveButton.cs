@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace FactoryBots.UI
 {
-    public class HomeButton : MonoBehaviour
+    public class LeaveButton : MonoBehaviour
     {
         [SerializeField] private Button _homeButton;
 

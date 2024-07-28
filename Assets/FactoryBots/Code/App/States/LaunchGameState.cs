@@ -10,7 +10,6 @@ using FactoryBots.Game.Services.Bots;
 using FactoryBots.Game.Services.Buildings;
 using FactoryBots.Game.Services.Input;
 using FactoryBots.Game.Services.Parking;
-using FactoryBots.UI;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -52,10 +51,18 @@ namespace FactoryBots.App.States
 
         private void RegisterGameServices()
         {
+            RegisterOverlay();
             RegisterInput();
             RegisterParking();
             RegisterBuildings();
             RegisterBots();
+        }
+
+        private void RegisterOverlay()
+        {
+            //ParkingManager parking = GetGameServiceFromScene<ParkingManager>();
+            //parking.Initialize();
+            //_gameContext.RegisterSingle<IGameParking>(parking);
         }
 
         private void RegisterInput()
@@ -107,14 +114,14 @@ namespace FactoryBots.App.States
             IAppAudio audio = _appContext.Single<IAppAudio>();
 
             Transform uiRoot = InitUIRoot();
-            HomeButton homeButton = InitHomeButton(assets, uiRoot);
+            //HomeButton homeButton = InitHomeButton(assets, uiRoot);
         }
 
         private Transform InitUIRoot() =>
             GameObject.FindGameObjectWithTag(UI_ROOT_TAG).transform;
 
-        private HomeButton InitHomeButton(IAppAssetProvider assets, Transform uiRoot) =>
-            assets.Instantiate(AssetPath.HOME_BUTTON, uiRoot).GetComponent<HomeButton>();
+        //private HomeButton InitHomeButton(IAppAssetProvider assets, Transform uiRoot) =>
+        //    assets.Instantiate(AssetPath.HOME_BUTTON, uiRoot).GetComponent<HomeButton>();
 
         private static TService GetGameServiceFromScene<TService>() where TService : MonoBehaviour, IGameService
         {

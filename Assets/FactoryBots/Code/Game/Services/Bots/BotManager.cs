@@ -1,5 +1,6 @@
 ﻿using FactoryBots.Game.Services.Buildings;
 using FactoryBots.Game.Services.Input;
+using FactoryBots.Game.Services.Overlay;
 using FactoryBots.Game.Services.Parking;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace FactoryBots.Game.Services.Bots
         private const string STORAGE_TAG = "Storage";
         private const string FACTORY_TAG = "Factory";
 
+        private readonly IGameOverlay _overlay;
         private readonly IGameInput _input;
         private readonly IGameParking _parking;
         private readonly IGameBuildings _buildings;
@@ -23,12 +25,12 @@ namespace FactoryBots.Game.Services.Bots
         private IBot _selectedBot;
         private bool _isAlarm;
 
-        public BotManager(IGameInput input, IGameParking parking, IGameBuildings buildings, BotFactory botFactory)
+        public BotManager(IGameOverlay overlay, IGameInput input, IGameParking parking, BotFactory botFactory)
         {
+            _overlay = overlay;
             _botFactory = botFactory;
             _input = input;
             _parking = parking;
-            _buildings = buildings;
         }
 
         public void Initialize()
@@ -37,8 +39,21 @@ namespace FactoryBots.Game.Services.Bots
             _selectedBot = null;
             _isAlarm = false;
 
+            _overlay.AlarmPanel.StartAlarmAction += OnAlarmStarted;
+            _overlay.AlarmPanel.CancelAlarmAction += OnAlarmCanceled;
+
             _input.SelectPerformedAction += OnSelectPerformed;
             _input.ExecutePerformedAction += OnExecutePerformed;
+        }
+
+        private void OnAlarmStarted()
+        {
+            Debug.Log("Alarm Started");
+        }
+
+        private void OnAlarmCanceled()
+        {
+            Debug.Log("Alarm Canceled");
         }
 
         private void OnSelectPerformed(GameObject targetObject)
@@ -86,6 +101,9 @@ namespace FactoryBots.Game.Services.Bots
 
         public void Cleanup()
         {
+            _overlay.AlarmPanel.StartAlarmAction -= OnAlarmStarted;
+            _overlay.AlarmPanel.CancelAlarmAction -= OnAlarmCanceled;
+
             _input.SelectPerformedAction -= OnSelectPerformed;
             _input.ExecutePerformedAction -= OnExecutePerformed;
         }

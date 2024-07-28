@@ -50,6 +50,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b410499dd18e64a9a7da486e138184, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alarmButton: {fileID: 7125082827496643774}
+  _resumeButton: {fileID: 4082414465878287256}
 --- !u!1 &2105008103508766569
 GameObject:
   m_ObjectHideFlags: 0

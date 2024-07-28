@@ -9,6 +9,7 @@ using FactoryBots.Game.Services;
 using FactoryBots.Game.Services.Bots;
 using FactoryBots.Game.Services.Buildings;
 using FactoryBots.Game.Services.Input;
+using FactoryBots.Game.Services.Overlay;
 using FactoryBots.Game.Services.Parking;
 using System;
 using UnityEngine;
@@ -60,9 +61,9 @@ namespace FactoryBots.App.States
 
         private void RegisterOverlay()
         {
-            //ParkingManager parking = GetGameServiceFromScene<ParkingManager>();
-            //parking.Initialize();
-            //_gameContext.RegisterSingle<IGameParking>(parking);
+            OverlayManager overlay = GetGameServiceFromScene<OverlayManager>();
+            overlay.Initialize();
+            _gameContext.RegisterSingle<IGameOverlay>(overlay);
         }
 
         private void RegisterInput()
@@ -97,9 +98,9 @@ namespace FactoryBots.App.States
                 _appContext.Single<IAppAssetProvider>());
 
             BotManager botManager = new BotManager(
+                _gameContext.Single<IGameOverlay>(),
                 _gameContext.Single<IGameInput>(),
                 _gameContext.Single<IGameParking>(),
-                _gameContext.Single<IGameBuildings>(),
                 botFactory);
 
             botManager.Initialize();

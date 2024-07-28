@@ -8,6 +8,15 @@ namespace FactoryBots.Game.Services.Overlay
         [SerializeField] private BotStatusPanel _botStatusPanel;
         [SerializeField] private AlarmPanel _alarmPanel;
 
+        public LeavePanel LeavePanel => _leavePanel;
+        public BotStatusPanel BotStatusPanel => _botStatusPanel;
+        public AlarmPanel AlarmPanel => _alarmPanel;
+
+        public void Initialize()
+        {
+            _alarmPanel.Initialize();
+        }
+
         public void Cleanup()
         {
 

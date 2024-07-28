@@ -12,8 +12,6 @@ namespace FactoryBots.Game.Services.Bots
         private const string BOT_TAG = "Bot";
         private const string WALKABLE_TAG = "Walkable";
         private const string BUILDING_TAG = "Building";
-        private const string STORAGE_TAG = "Storage";
-        private const string FACTORY_TAG = "Factory";
 
         private readonly IGameOverlay _overlay;
         private readonly IGameInput _input;
@@ -39,21 +37,33 @@ namespace FactoryBots.Game.Services.Bots
             _selectedBot = null;
             _isAlarm = false;
 
-            _overlay.AlarmPanel.StartAlarmAction += OnAlarmStarted;
-            _overlay.AlarmPanel.CancelAlarmAction += OnAlarmCanceled;
-
-            _input.SelectPerformedAction += OnSelectPerformed;
-            _input.ExecutePerformedAction += OnExecutePerformed;
+            SubscribeToEvents();
         }
 
         private void OnAlarmStarted()
         {
-            Debug.Log("Alarm Started");
+            _isAlarm = true;
+
+            if (IsAllBotsCloseToBase())
+            {
+                _parking.CloseGate();
+                return;
+            }
+
+            SendAllBotsToBase();
         }
 
         private void OnAlarmCanceled()
         {
-            Debug.Log("Alarm Canceled");
+            _isAlarm = false;
+
+            if (_parking.IsGateOpen)
+            {
+                ReturnAllBotsToTarget();
+                return;
+            }
+
+            _parking.OpenGate();
         }
 
         private void OnSelectPerformed(GameObject targetObject)
@@ -103,13 +113,88 @@ namespace FactoryBots.Game.Services.Bots
             }
         }
 
-        public void Cleanup()
+        private void OnBotReachedTarget()
+        {
+            if (_isAlarm == false)
+            {
+                return;
+            }
+
+            if (IsAllBotsCloseToBase())
+            {
+                _parking.CloseGate();
+            }
+        }
+
+        private void OnGateOpened()
+        {
+            ReturnAllBotsToTarget();
+        }
+
+        private void SendAllBotsToBase()
+        {
+            foreach (IBot bot in _bots)
+            {
+                bot.MoveToBase();
+            }
+        }
+
+        private void ReturnAllBotsToTarget()
+        {
+            foreach (IBot bot in _bots)
+            {
+                bot.ReturnToTarget();
+            }
+        }
+
+        private bool IsAllBotsCloseToBase()
+        {
+            foreach (IBot bot in _bots)
+            {
+                if (bot.IsCloseToBase == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void SubscribeToEvents()
+        {
+            _overlay.AlarmPanel.StartAlarmAction += OnAlarmStarted;
+            _overlay.AlarmPanel.CancelAlarmAction += OnAlarmCanceled;
+
+            _input.SelectPerformedAction += OnSelectPerformed;
+            _input.ExecutePerformedAction += OnExecutePerformed;
+
+            _parking.GateOpenedAction += OnGateOpened;
+
+            foreach (IBot bot in _bots)
+            {
+                bot.TargetReachedAction += OnBotReachedTarget;
+            }
+        }
+        
+        private void UnsubscribeFromEvents()
         {
             _overlay.AlarmPanel.StartAlarmAction -= OnAlarmStarted;
             _overlay.AlarmPanel.CancelAlarmAction -= OnAlarmCanceled;
 
             _input.SelectPerformedAction -= OnSelectPerformed;
             _input.ExecutePerformedAction -= OnExecutePerformed;
+
+            _parking.GateOpenedAction -= OnGateOpened;
+
+            foreach (IBot bot in _bots)
+            {
+                bot.TargetReachedAction -= OnBotReachedTarget;
+            }
+        }
+
+        public void Cleanup()
+        {
+            UnsubscribeFromEvents();
         }
     }
 }

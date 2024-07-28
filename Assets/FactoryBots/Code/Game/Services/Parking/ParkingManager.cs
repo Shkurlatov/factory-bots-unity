@@ -36,17 +36,19 @@ namespace FactoryBots.Game.Services.Parking
                 StopCoroutine(_currentGateCoroutine);
             }
 
-            _currentGateCoroutine = StartCoroutine(RotateGateTo(_gateMaxAngle, GateOpenedAction));
+            _currentGateCoroutine = StartCoroutine(RotateGateTo(_gateMaxAngle, OnGateOpenComplete));
         }
 
         public void CloseGate()
         {
+            IsGateOpen = false;
+
             if (_currentGateCoroutine != null)
             {
                 StopCoroutine(_currentGateCoroutine);
             }
 
-            _currentGateCoroutine = StartCoroutine(RotateGateTo(_gateMinAngle, GateClosedAction));
+            _currentGateCoroutine = StartCoroutine(RotateGateTo(_gateMinAngle, OnGateCloseComplete));
         }
 
         private IEnumerator RotateGateTo(float targetAngle, Action onComplete)
@@ -70,7 +72,17 @@ namespace FactoryBots.Game.Services.Parking
 
             _gate.transform.rotation = endRotation;
             onComplete?.Invoke();
-            Debug.Log("Gate Closed");
+        }
+
+        private void OnGateOpenComplete()
+        {
+            IsGateOpen = true;
+            GateOpenedAction?.Invoke();
+        }
+        
+        private void OnGateCloseComplete()
+        {
+            GateClosedAction?.Invoke();
         }
 
         public void Cleanup()

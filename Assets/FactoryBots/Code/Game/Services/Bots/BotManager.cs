@@ -60,6 +60,7 @@ namespace FactoryBots.Game.Services.Bots
         {
             if (_selectedBot != null)
             {
+                _overlay.BotStatusPanel.UpdateStatusText(string.Empty);
                 _selectedBot = null;
             }
 
@@ -71,6 +72,7 @@ namespace FactoryBots.Game.Services.Bots
             if (targetObject.CompareTag(BOT_TAG))
             {
                 _selectedBot = targetObject.GetComponent<IBot>();
+                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
             }
         }
 
@@ -89,6 +91,7 @@ namespace FactoryBots.Game.Services.Bots
             if (targetObject.CompareTag(WALKABLE_TAG))
             {
                 _selectedBot.MoveToPosition(targetPosition);
+                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
 
                 return;
             }
@@ -96,6 +99,7 @@ namespace FactoryBots.Game.Services.Bots
             if (targetObject.CompareTag(BUILDING_TAG))
             {
                 _selectedBot.MoveToBuilding(targetObject.GetComponent<IBuilding>());
+                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
             }
         }
 

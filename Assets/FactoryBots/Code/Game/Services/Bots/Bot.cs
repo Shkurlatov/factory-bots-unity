@@ -133,10 +133,10 @@ namespace FactoryBots.Game.Services.Bots
         {
             if (_targetBuilding == null)
             {
-                return $"{_id} => (X: {(int)_targetPosition.x}, Y: {(int)_targetPosition.z})";
+                return $"{_id} - (X: {(int)_targetPosition.x}, Y: {(int)_targetPosition.z})";
             }
 
-            return $"{_id} => {_targetBuilding.Id}";
+            return $"{_id} - {_targetBuilding.Id}";
         }
     }
 }

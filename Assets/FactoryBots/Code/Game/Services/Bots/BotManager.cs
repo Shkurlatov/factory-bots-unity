@@ -40,37 +40,12 @@ namespace FactoryBots.Game.Services.Bots
             SubscribeToEvents();
         }
 
-        private void OnAlarmStarted()
-        {
-            _isAlarm = true;
-
-            if (IsAllBotsCloseToBase())
-            {
-                _parking.CloseGate();
-                return;
-            }
-
-            SendAllBotsToBase();
-        }
-
-        private void OnAlarmCanceled()
-        {
-            _isAlarm = false;
-
-            if (_parking.IsGateOpen)
-            {
-                ReturnAllBotsToTarget();
-                return;
-            }
-
-            _parking.OpenGate();
-        }
-
         private void OnSelectPerformed(GameObject targetObject)
         {
             if (_selectedBot != null)
             {
                 _overlay.BotStatusPanel.UpdateStatusText(string.Empty);
+                _selectedBot.Unselect();
                 _selectedBot = null;
             }
 
@@ -83,6 +58,7 @@ namespace FactoryBots.Game.Services.Bots
             {
                 _selectedBot = targetObject.GetComponent<IBot>();
                 _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
+                _selectedBot.Select();
             }
         }
 
@@ -111,6 +87,32 @@ namespace FactoryBots.Game.Services.Bots
                 _selectedBot.MoveToBuilding(targetObject.GetComponent<IBuilding>());
                 _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
             }
+        }
+
+        private void OnAlarmStarted()
+        {
+            _isAlarm = true;
+
+            if (IsAllBotsCloseToBase())
+            {
+                _parking.CloseGate();
+                return;
+            }
+
+            SendAllBotsToBase();
+        }
+
+        private void OnAlarmCanceled()
+        {
+            _isAlarm = false;
+
+            if (_parking.IsGateOpen)
+            {
+                ReturnAllBotsToTarget();
+                return;
+            }
+
+            _parking.OpenGate();
         }
 
         private void OnBotReachedTarget()

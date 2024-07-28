@@ -9,6 +9,7 @@ namespace FactoryBots.Game.Services.Bots
     public class Bot : MonoBehaviour, IBot, IDelivery
     {
         [SerializeField] private Animator _animator;
+        [SerializeField] private GameObject _highlight;
         [SerializeField] private NavMeshAgent _navMeshAgent;
         [SerializeField] private Transform _cargoPoint;
 
@@ -32,6 +33,7 @@ namespace FactoryBots.Game.Services.Bots
             _id = botId;
             _basePoint = botBase.transform;
             _targetPosition = botBase.transform.position;
+            _highlight.SetActive(false);
 
             AnimatorClipInfo[] clipInfo = _animator.GetCurrentAnimatorClipInfo(0);
 
@@ -68,6 +70,12 @@ namespace FactoryBots.Game.Services.Bots
                 }
             }
         }
+
+        public void Select() => 
+            _highlight.SetActive(true);
+
+        public void Unselect() => 
+            _highlight.SetActive(false);
 
         public void MoveToPosition(Vector3 targetPosition)
         {

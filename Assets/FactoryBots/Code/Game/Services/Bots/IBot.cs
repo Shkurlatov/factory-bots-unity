@@ -11,6 +11,8 @@ namespace FactoryBots.Game.Services.Bots
 
         event Action TargetReachedAction;
 
+        void Select();
+        void Unselect();
         void MoveToPosition(Vector3 targetPosition);
         void MoveToBuilding(IBuilding targetBuilding);
         void MoveToBase();

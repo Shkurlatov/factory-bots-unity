@@ -21,9 +21,6 @@ namespace FactoryBots.Game.Services.Buildings
             }
         }
 
-        public void Cleanup()
-        {
-
-        }
+        public void Cleanup() { }
     }
 }

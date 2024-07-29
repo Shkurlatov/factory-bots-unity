@@ -30,7 +30,6 @@ namespace FactoryBots.Game.Services
             }
 
             Debug.LogError($"Service of type {serviceType} is not registered.");
-
             return null;
         }
 

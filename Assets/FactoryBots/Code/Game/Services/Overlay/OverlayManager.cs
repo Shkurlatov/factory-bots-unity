@@ -19,9 +19,6 @@ namespace FactoryBots.Game.Services.Overlay
             _alarmPanel.Initialize();
         }
 
-        public void Cleanup()
-        {
-
-        }
+        public void Cleanup() { }
     }
 }

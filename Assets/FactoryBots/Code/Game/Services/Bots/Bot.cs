@@ -23,7 +23,6 @@ namespace FactoryBots.Game.Services.Bots
             _components = components;
             _commands = new Stack<IBotCommand>();
             _closeToBaseDistance = 3.0f;
-
             TargetReachedAction = onTargetReached;
 
             _components.Mover.TargetReachedAction += OnTargetReached;
@@ -167,7 +166,6 @@ namespace FactoryBots.Game.Services.Bots
         {
             _components.Mover.TargetReachedAction -= OnTargetReached;
             Object.Destroy(_components.BotObject);
-
             TargetReachedAction = null;
         }
     }

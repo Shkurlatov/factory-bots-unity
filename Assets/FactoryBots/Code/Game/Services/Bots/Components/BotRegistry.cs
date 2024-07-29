@@ -6,9 +6,7 @@ namespace FactoryBots.Game.Services.Bots.Components
     {
         public string Id {  get; private set; }
 
-        public void Initialize(string id)
-        {
-            Id = id;
-        }
+        public void Initialize(string botId) => 
+            Id = botId;
     }
 }

@@ -87,7 +87,6 @@ namespace FactoryBots.Game.Services.Bots
             {
                 _selectedBot.ExecutePositionCommand(targetPosition);
                 _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
-
                 return;
             }
 
@@ -137,10 +136,8 @@ namespace FactoryBots.Game.Services.Bots
             }
         }
 
-        private void OnGateOpened()
-        {
+        private void OnGateOpened() => 
             ReturnAllBotsToTarget();
-        }
 
         private void SendAllBotsToBase()
         {

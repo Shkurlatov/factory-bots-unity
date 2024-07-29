@@ -17,7 +17,6 @@ namespace FactoryBots.Game.Services.Bots.Components
             {
                 float clipLength = clipInfo[0].clip.length;
                 float randomStartTime = Random.Range(0f, clipLength);
-
                 _animator.Play(clipInfo[0].clip.name, 0, randomStartTime / clipLength);
             }
         }

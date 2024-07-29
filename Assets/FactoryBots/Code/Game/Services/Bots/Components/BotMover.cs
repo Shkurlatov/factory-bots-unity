@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FactoryBots.SO;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,9 +13,11 @@ namespace FactoryBots.Game.Services.Bots.Components
 
         public event Action TargetReachedAction;
 
-        public void Initialize()
+        public void Initialize(BotConfig botConfig)
         {
-
+            _navMeshAgent.speed = botConfig.MovementSpeed;
+            _navMeshAgent.angularSpeed = botConfig.RotationSpeed;
+            _navMeshAgent.acceleration = botConfig.Acceleration;
         }
 
         public void MoveToTargetPosition(Vector3 targetPosition)

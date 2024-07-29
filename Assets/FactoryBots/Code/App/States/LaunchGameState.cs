@@ -1,6 +1,7 @@
 ﻿using FactoryBots.App.Bootstrap;
 using FactoryBots.App.Services;
 using FactoryBots.App.Services.Assets;
+using FactoryBots.App.Services.Configs;
 using FactoryBots.Game;
 using FactoryBots.Game.Services;
 using FactoryBots.Game.Services.Bots;
@@ -92,7 +93,8 @@ namespace FactoryBots.App.States
         private void RegisterBots()
         {
             BotFactory botFactory = new BotFactory(
-                _appContext.Single<IAppAssetProvider>());
+                _appContext.Single<IAppAssetProvider>(),
+                _appContext.Single<IAppConfigProvider>());
 
             BotManager botManager = new BotManager(
                 _gameContext.Single<IGameOverlay>(),

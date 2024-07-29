@@ -2,6 +2,7 @@
 using FactoryBots.App.Services;
 using FactoryBots.App.Services.Assets;
 using FactoryBots.App.Services.Audio;
+using FactoryBots.App.Services.Configs;
 using FactoryBots.App.Services.Progress;
 
 namespace FactoryBots.App.States
@@ -34,6 +35,7 @@ namespace FactoryBots.App.States
         private void RegisterAppServices()
         {
             IAppAssetProvider assets = RegisterAssetProvider();
+            RegisterConfigProvider();
             RegisterData();
             RegisterAudio(assets);
         }
@@ -44,6 +46,9 @@ namespace FactoryBots.App.States
             _appContext.RegisterSingle(assets);
             return assets;
         }
+
+        private void RegisterConfigProvider() =>
+            _appContext.RegisterSingle<IAppConfigProvider>(new ConfigProvider());
 
         private void RegisterData() =>
             _appContext.RegisterSingle<IAppData>(new PlayerPrefsSaveLoadManager());

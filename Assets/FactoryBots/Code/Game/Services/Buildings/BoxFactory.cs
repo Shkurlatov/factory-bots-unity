@@ -24,8 +24,6 @@ namespace FactoryBots.Game.Services.Buildings
                 OnDestroyBox,
                 collectionCheck: false
             );
-
-            _nextBoxId = 1;
         }
 
         public Box GetBox(Vector3 instantiationPosition)
@@ -33,6 +31,7 @@ namespace FactoryBots.Game.Services.Buildings
             Box box = _boxPool.Get();
             box.transform.position = instantiationPosition;
             box.SetId(_nextBoxId++);
+            box.name = $"Box {box.Id + 1}";
             return box;
         }
 

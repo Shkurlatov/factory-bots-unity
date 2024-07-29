@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace FactoryBots.App.Services.Progress
 {
     [Serializable]

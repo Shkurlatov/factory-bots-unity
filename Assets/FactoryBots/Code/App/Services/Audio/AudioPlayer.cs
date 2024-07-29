@@ -10,10 +10,8 @@ namespace FactoryBots.App.Services.Audio
         [SerializeField] private AudioClip _exampleSoundClip;
         [SerializeField] private AudioClip _exampleEffectClip;
 
-        private void Awake()
-        {
+        private void Awake() => 
             DontDestroyOnLoad(gameObject);
-        }
 
         public void PlayExampleSoundSound() => 
             _soundSource.PlayOneShot(_exampleSoundClip);

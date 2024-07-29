@@ -14,6 +14,7 @@ namespace FactoryBots.App.Services.Progress
         public async Task SaveSettingsAsync(SettingsData settingsData)
         {
             await _semaphore.WaitAsync();
+
             try
             {
                 string json = JsonUtility.ToJson(settingsData);
@@ -33,6 +34,7 @@ namespace FactoryBots.App.Services.Progress
         public async Task<SettingsData> LoadSettingsAsync()
         {
             await _semaphore.WaitAsync();
+
             try
             {
                 if (PlayerPrefs.HasKey(SETTINGS_KEY))
@@ -41,6 +43,7 @@ namespace FactoryBots.App.Services.Progress
                     SettingsData settingsData = JsonUtility.FromJson<SettingsData>(json);
                     return await Task.FromResult(settingsData);
                 }
+
                 return await Task.FromResult(new SettingsData(1));
             }
             catch (Exception ex)
@@ -54,9 +57,7 @@ namespace FactoryBots.App.Services.Progress
             }
         }
 
-        public void Cleanup()
-        {
+        public void Cleanup() => 
             _semaphore.Dispose();
-        }
     }
 }

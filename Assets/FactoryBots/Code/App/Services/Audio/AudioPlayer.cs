@@ -7,35 +7,19 @@ namespace FactoryBots.App.Services.Audio
         [SerializeField] private AudioSource _soundSource;
         [SerializeField] private AudioSource _effectSource;
 
-        [SerializeField] private AudioClip _cardFlipClip;
-        [SerializeField] private AudioClip _matchClip;
-        [SerializeField] private AudioClip _mismatchClip;
-        [SerializeField] private AudioClip _gameCompleteClip;
+        [SerializeField] private AudioClip _exampleSoundClip;
+        [SerializeField] private AudioClip _exampleEffectClip;
 
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
         }
 
-        public void PlayCardFlipSound()
-        {
-            _soundSource.PlayOneShot(_cardFlipClip);
-        }
+        public void PlayExampleSoundSound() => 
+            _soundSource.PlayOneShot(_exampleSoundClip);
 
-        public void PlayMatchSound()
-        {
-            _effectSource.PlayOneShot(_matchClip);
-        }
-
-        public void PlayMismatchSound()
-        {
-            _effectSource.PlayOneShot(_mismatchClip);
-        }
-
-        public void PlayGameCompleteSound()
-        {
-            _effectSource.PlayOneShot(_gameCompleteClip);
-        }
+        public void PlayExampleEffectSound() => 
+            _effectSource.PlayOneShot(_exampleEffectClip);
 
         public void Cleanup() { }
     }

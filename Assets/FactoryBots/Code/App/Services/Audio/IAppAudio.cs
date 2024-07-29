@@ -2,9 +2,7 @@
 {
     public interface IAppAudio : IAppService
     {
-        void PlayCardFlipSound();
-        void PlayMatchSound();
-        void PlayMismatchSound();
-        void PlayGameCompleteSound();
+        void PlayExampleSoundSound();
+        void PlayExampleEffectSound();
     }
 }

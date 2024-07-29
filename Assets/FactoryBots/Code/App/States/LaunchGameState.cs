@@ -18,7 +18,6 @@ namespace FactoryBots.App.States
     public class LaunchGameState : IPayloadedState<GameMode>
     {
         private const string GAME_SCENE = "Game";
-        private const string UI_ROOT_TAG = "UIRoot";
 
         private readonly IAppStateMachine _appStateMachine;
         private readonly SceneLoader _sceneLoader;
@@ -39,6 +38,7 @@ namespace FactoryBots.App.States
             _gameMode = gameMode;
             _sceneLoader.Load(GAME_SCENE, OnLoaded);
         }
+
         private void OnLoaded()
         {
             _gameContext = new GameServiceContainer();
@@ -76,7 +76,7 @@ namespace FactoryBots.App.States
         private void RegisterParking()
         {
             ParkingManager parking = GetGameServiceFromScene<ParkingManager>();
-            parking.Initialize();
+            parking.Initialize(_gameMode.BotAmount);
             _gameContext.RegisterSingle<IGameParking>(parking);
         }
         

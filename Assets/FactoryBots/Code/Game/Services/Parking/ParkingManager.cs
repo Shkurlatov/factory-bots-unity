@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace FactoryBots.Game.Services.Parking
@@ -15,17 +14,29 @@ namespace FactoryBots.Game.Services.Parking
         [SerializeField] private GameObject _gate;
         [SerializeField] private List<Transform> _botBasePoints;
 
+        private int _botAmount;
         private Coroutine _currentGateCoroutine;
 
         public bool IsGateOpen { get; private set; }
 
-        public List<Transform> BotBasePoints => _botBasePoints.ToList();
-
         public event Action GateOpenedAction;
 
-        public void Initialize()
+        public void Initialize(int botAmount)
         {
             IsGateOpen = true;
+            _botAmount = ValidateBotAmount(botAmount);
+        }
+
+        public List<Transform> GetBotBasePoints()
+        {
+            List<Transform> botBasePoints = new List<Transform>();
+
+            for (int i = 0; i < _botAmount; i++)
+            {
+                botBasePoints.Add(_botBasePoints[i]);
+            }
+
+            return botBasePoints;
         }
 
         public void OpenGate()
@@ -76,6 +87,31 @@ namespace FactoryBots.Game.Services.Parking
                 IsGateOpen = true;
                 GateOpenedAction?.Invoke();
             }
+        }
+
+        private int ValidateBotAmount(int botAmount)
+        {
+            int botBasePointsCount = _botBasePoints.Count;
+
+            if (botBasePointsCount == 0)
+            {
+                Debug.LogError($"References to bot base points was lost.");
+                return 0;
+            }
+
+            if (botBasePointsCount < botAmount)
+            {
+                Debug.LogError($"Not enough bot base points to place all bots.");
+                return botBasePointsCount;
+            }
+
+            if (botAmount < 1)
+            {
+                Debug.LogError($"At least 1 bot should be placed, but requested bot amount is {botAmount}.");
+                return 1;
+            }
+
+            return botAmount;
         }
 
         public void Cleanup()

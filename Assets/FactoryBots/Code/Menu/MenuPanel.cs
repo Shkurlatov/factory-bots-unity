@@ -1,7 +1,6 @@
 using FactoryBots.App.Services.Progress;
 using FactoryBots.Game;
 using System;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,13 +8,14 @@ namespace FactoryBots.Menu
 {
     public class MenuPanel : MonoBehaviour
     {
-        [SerializeField] private TMP_Text _gameModeText;
         [SerializeField] private Slider _gameModeSlider;
+        [SerializeField] private Image _sliderImage;
         [SerializeField] private Button _startButton;
         [SerializeField] private Button _exitButton;
 
         private IAppData _data;
         private int _gameModeValue;
+        private float _sliderImageFillFactor = 1.0f;
 
         public event Action<GameMode> StartAction;
         public event Action ExitAction;
@@ -42,18 +42,20 @@ namespace FactoryBots.Menu
 
             _gameModeSlider.value = settingsData.BotAmount;
             _gameModeValue = settingsData.BotAmount;
-            UpdateGameModeText();
+            _sliderImageFillFactor = 1 / (_gameModeSlider.maxValue - _gameModeSlider.minValue + 1);
+
+            UpdateSliderImage();
         }
 
         private void OnGameModeValueChanged(float value)
         {
             _gameModeValue = (int)value;
-            UpdateGameModeText();
+            UpdateSliderImage();
         }
 
         private async void OnStartButtonClick()
         {
-            StartAction?.Invoke(GetGameMode());
+            StartAction?.Invoke(new GameMode(_gameModeValue));
 
             await _data.SaveSettingsAsync(new SettingsData(_gameModeValue));
         }
@@ -61,16 +63,7 @@ namespace FactoryBots.Menu
         private void OnExitButtonClick() => 
             ExitAction?.Invoke();
 
-        private void UpdateGameModeText()
-        {
-            int rows = _gameModeValue / 2;
-            int columns = _gameModeValue - rows;
-            _gameModeText.text = $"{rows} x {columns}";
-        }
-
-        private GameMode GetGameMode()
-        {
-            return new GameMode(_gameModeValue);
-        }
+        private void UpdateSliderImage() => 
+            _sliderImage.fillAmount = _gameModeSlider.value * _sliderImageFillFactor;
     }
 }

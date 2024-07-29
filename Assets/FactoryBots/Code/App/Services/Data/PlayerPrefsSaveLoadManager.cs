@@ -41,12 +41,12 @@ namespace FactoryBots.App.Services.Progress
                     SettingsData settingsData = JsonUtility.FromJson<SettingsData>(json);
                     return await Task.FromResult(settingsData);
                 }
-                return await Task.FromResult(new SettingsData(4));
+                return await Task.FromResult(new SettingsData(1));
             }
             catch (Exception ex)
             {
                 Debug.LogError($"Failed to load settings data. Exception: {ex.Message}");
-                return await Task.FromResult(new SettingsData(4));
+                return await Task.FromResult(new SettingsData(1));
             }
             finally
             {

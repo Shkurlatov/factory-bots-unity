@@ -34,7 +34,7 @@ namespace FactoryBots.Game.Services.Bots
 
         public void Initialize()
         {
-            _bots = _botFactory.CreateBots(_parking.BotBasePoints, OnBotReachedTarget);
+            _bots = _botFactory.CreateBots(_parking.GetBotBasePoints(), OnBotReachedTarget);
             _selectedBot = null;
             _isAlarm = false;
 

@@ -1,0 +1,54 @@
+{
+    "name": "GameInputControls",
+    "maps": [
+        {
+            "name": "GameInput",
+            "id": "3509a0ab-0002-46d1-ad4d-a183514eef95",
+            "actions": [
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "06704dce-95dc-44e9-a5fa-666c39dbb914",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Execute",
+                    "type": "Button",
+                    "id": "f6254072-8395-463b-9035-e58233a16c0e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "2230f7ca-5f33-45e0-95d7-f4c98bdc13a0",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8f0d8d70-446d-4c66-9ec3-d44b495bf971",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Execute",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

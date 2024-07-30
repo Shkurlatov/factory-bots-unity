@@ -46,9 +46,10 @@ namespace FactoryBots.Game.Services.Bots
         {
             if (_selectedBot != null)
             {
-                _overlay.BotStatusPanel.UpdateStatusText(string.Empty);
+                _selectedBot.StatusUpdatedAction -= _overlay.BotStatusPanel.UpdateStatusText;
                 _selectedBot.Unselect();
                 _selectedBot = null;
+                _overlay.BotStatusPanel.UpdateStatusText(string.Empty);
             }
 
             if (targetObject == null)
@@ -62,8 +63,9 @@ namespace FactoryBots.Game.Services.Bots
                 {
                     string botId = targetObject.GetComponent<BotRegistry>().Id;
                     _selectedBot = _bots[botId];
-                    _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
                     _selectedBot.Select();
+                    _selectedBot.StatusUpdatedAction += _overlay.BotStatusPanel.UpdateStatusText;
+                    _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.GetStatus());
                 }
                 catch (Exception exception)
                 {
@@ -108,8 +110,6 @@ namespace FactoryBots.Game.Services.Bots
             {
                 _selectedBot.ClearAllAndExecuteCommand(command);
             }
-
-            _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
         }
 
         private void OnAlarmStarted()
@@ -151,7 +151,7 @@ namespace FactoryBots.Game.Services.Bots
             }
         }
 
-        private void OnGateOpened() => 
+        private void OnGateOpened() =>
             ReturnAllBotsToTarget();
 
         private void SendAllBotsToBase()
@@ -160,11 +160,6 @@ namespace FactoryBots.Game.Services.Bots
             {
                 bot.ExecuteBaseCommand();
             }
-
-            if (_selectedBot != null)
-            {
-                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
-            }
         }
 
         private void ReturnAllBotsToTarget()
@@ -172,11 +167,6 @@ namespace FactoryBots.Game.Services.Bots
             foreach (IBot bot in _bots.Values)
             {
                 bot.ExecutePreviousCommand();
-            }
-
-            if (_selectedBot != null)
-            {
-                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
             }
         }
 
@@ -203,7 +193,7 @@ namespace FactoryBots.Game.Services.Bots
 
             _parking.GateOpenedAction += OnGateOpened;
         }
-        
+
         private void UnsubscribeFromEvents()
         {
             _overlay.AlarmPanel.StartAlarmAction -= OnAlarmStarted;

@@ -17,9 +17,9 @@ namespace FactoryBots.Game.Services.Bots
         private int _currentCommandIndex;
         private bool _isFollowBasePoint;
 
-        public string Status => GetStatus();
-
         private Action TargetReachedAction;
+
+        public event Action<string> StatusUpdatedAction;
 
         public Bot(BotComponents components, Action onTargetReached)
         {
@@ -34,17 +34,34 @@ namespace FactoryBots.Game.Services.Bots
             _components.Mover.TargetReachedAction += OnTargetReached;
         }
 
-        public bool IsCloseToBase()
-        {
-            float distanceToBase = Vector3.Distance(_components.BotObject.transform.position, _components.BasePoint.position);
-            return distanceToBase < _closeToBaseDistance;
-        }
-
         public void Select() =>
             _components.Effects.ToggleHighlight(true);
 
         public void Unselect() =>
             _components.Effects.ToggleHighlight(false);
+
+        public string GetStatus()
+        {
+            string id = _components.Registry.Id;
+
+            if (_isFollowBasePoint)
+            {
+                return $"{id} - Base";
+            }
+
+            if (_currentCommandIndex >= 0)
+            {
+                return $"{id} - {_commands[_currentCommandIndex].TargetId}";
+            }
+
+            return id;
+        }
+
+        public bool IsCloseToBase()
+        {
+            float distanceToBase = Vector3.Distance(_components.BotObject.transform.position, _components.BasePoint.position);
+            return distanceToBase < _closeToBaseDistance;
+        }
 
         public void ExecuteBaseCommand()
         {
@@ -170,23 +187,7 @@ namespace FactoryBots.Game.Services.Bots
         {
             _components.Animator.PlayMove();
             _components.Mover.MoveToTargetPosition(targetPosition);
-        }
-
-        private string GetStatus()
-        {
-            string id = _components.Registry.Id;
-
-            if (_isFollowBasePoint)
-            {
-                return $"{id} - Base";
-            }
-
-            if (_currentCommandIndex >= 0)
-            {
-                return $"{id} - {_commands[_currentCommandIndex].TargetId}";
-            }
-
-            return id;
+            StatusUpdatedAction?.Invoke(GetStatus());
         }
 
         public void Cleanup()

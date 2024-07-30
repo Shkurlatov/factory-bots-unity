@@ -1,4 +1,5 @@
-﻿using FactoryBots.Game.Services.Bots.Components;
+﻿using FactoryBots.Game.Services.Bots.Commands;
+using FactoryBots.Game.Services.Bots.Components;
 using FactoryBots.Game.Services.Buildings;
 using FactoryBots.Game.Services.Input;
 using FactoryBots.Game.Services.Overlay;
@@ -45,9 +46,10 @@ namespace FactoryBots.Game.Services.Bots
         {
             if (_selectedBot != null)
             {
-                _overlay.BotStatusPanel.UpdateStatusText(string.Empty);
+                _selectedBot.StatusUpdatedAction -= _overlay.BotStatusPanel.UpdateStatusText;
                 _selectedBot.Unselect();
                 _selectedBot = null;
+                _overlay.BotStatusPanel.UpdateStatusText(string.Empty);
             }
 
             if (targetObject == null)
@@ -61,8 +63,9 @@ namespace FactoryBots.Game.Services.Bots
                 {
                     string botId = targetObject.GetComponent<BotRegistry>().Id;
                     _selectedBot = _bots[botId];
-                    _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
                     _selectedBot.Select();
+                    _selectedBot.StatusUpdatedAction += _overlay.BotStatusPanel.UpdateStatusText;
+                    _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.GetStatus());
                 }
                 catch (Exception exception)
                 {
@@ -71,7 +74,7 @@ namespace FactoryBots.Game.Services.Bots
             }
         }
 
-        private void OnExecutePerformed(GameObject targetObject, Vector3 targetPosition)
+        private void OnExecutePerformed(GameObject targetObject, Vector3 targetPosition, bool isFeaturedCommand)
         {
             if (_isAlarm)
             {
@@ -85,15 +88,27 @@ namespace FactoryBots.Game.Services.Bots
 
             if (targetObject.CompareTag(WALKABLE_TAG))
             {
-                _selectedBot.ExecutePositionCommand(targetPosition);
-                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
+                BotPositionCommand command = new BotPositionCommand(targetPosition);
+                SendBotCommand(command, isFeaturedCommand);
                 return;
             }
 
             if (targetObject.CompareTag(BUILDING_TAG))
             {
-                _selectedBot.ExecuteDeliveryCommand(targetObject.GetComponent<IBuilding>());
-                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
+                BotDeliveryCommand command = new BotDeliveryCommand(targetObject.GetComponent<IBuilding>());
+                SendBotCommand(command, isFeaturedCommand);
+            }
+        }
+
+        private void SendBotCommand(IBotCommand command, bool isFeaturedCommand)
+        {
+            if (isFeaturedCommand)
+            {
+                _selectedBot.AddCommand(command);
+            }
+            else
+            {
+                _selectedBot.ClearAllAndExecuteCommand(command);
             }
         }
 
@@ -136,7 +151,7 @@ namespace FactoryBots.Game.Services.Bots
             }
         }
 
-        private void OnGateOpened() => 
+        private void OnGateOpened() =>
             ReturnAllBotsToTarget();
 
         private void SendAllBotsToBase()
@@ -145,11 +160,6 @@ namespace FactoryBots.Game.Services.Bots
             {
                 bot.ExecuteBaseCommand();
             }
-
-            if (_selectedBot != null)
-            {
-                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
-            }
         }
 
         private void ReturnAllBotsToTarget()
@@ -157,11 +167,6 @@ namespace FactoryBots.Game.Services.Bots
             foreach (IBot bot in _bots.Values)
             {
                 bot.ExecutePreviousCommand();
-            }
-
-            if (_selectedBot != null)
-            {
-                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
             }
         }
 
@@ -188,7 +193,7 @@ namespace FactoryBots.Game.Services.Bots
 
             _parking.GateOpenedAction += OnGateOpened;
         }
-        
+
         private void UnsubscribeFromEvents()
         {
             _overlay.AlarmPanel.StartAlarmAction -= OnAlarmStarted;

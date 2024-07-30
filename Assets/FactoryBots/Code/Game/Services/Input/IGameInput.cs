@@ -6,6 +6,6 @@ namespace FactoryBots.Game.Services.Input
     public interface IGameInput : IGameService
     {
         event Action<GameObject> SelectPerformedAction;
-        event Action<GameObject, Vector3> ExecutePerformedAction;
+        event Action<GameObject, Vector3, bool> ExecutePerformedAction;
     }
 }

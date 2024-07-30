@@ -11,8 +11,8 @@ namespace FactoryBots.Game.Services.Bots
         void Select();
         void Unselect();
         void ExecuteBaseCommand();
-        void ExecutePositionCommand(Vector3 targetPosition);
-        void ExecuteDeliveryCommand(IBuilding targetBuilding);
+        void ExecutePositionCommand(Vector3 targetPosition, bool isModifiedCommand);
+        void ExecuteDeliveryCommand(IBuilding targetBuilding, bool isModifiedCommand);
         void ExecutePreviousCommand();
         void Cleanup();
     }

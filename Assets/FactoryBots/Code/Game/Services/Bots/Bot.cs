@@ -53,7 +53,7 @@ namespace FactoryBots.Game.Services.Bots
             MoveToTargetPosition(_components.BasePoint.position);
         }
 
-        public void ExecutePositionCommand(Vector3 targetPosition)
+        public void ExecutePositionCommand(Vector3 targetPosition, bool isModifiedCommand)
         {
             if (_commands.Count > 0)
             {
@@ -66,7 +66,7 @@ namespace FactoryBots.Game.Services.Bots
             MoveToTargetPosition(targetPosition);
         }
 
-        public void ExecuteDeliveryCommand(IBuilding targetBuilding)
+        public void ExecuteDeliveryCommand(IBuilding targetBuilding, bool isModifiedCommand)
         {
             if (_commands.Count > 0)
             {

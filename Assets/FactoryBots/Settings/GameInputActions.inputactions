@@ -1,5 +1,5 @@
 {
-    "name": "GameInputControls",
+    "name": "GameInputActions",
     "maps": [
         {
             "name": "GameInput",
@@ -22,6 +22,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SetModifier",
+                    "type": "Button",
+                    "id": "8e609342-8445-4a36-89c5-d5021efb12f6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RemoveModifier",
+                    "type": "Button",
+                    "id": "c354ee28-245d-4485-a89b-2b6c68cfffb1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -29,7 +47,7 @@
                     "name": "",
                     "id": "2230f7ca-5f33-45e0-95d7-f4c98bdc13a0",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Select",
@@ -40,10 +58,32 @@
                     "name": "",
                     "id": "8f0d8d70-446d-4c66-9ec3-d44b495bf971",
                     "path": "<Mouse>/rightButton",
-                    "interactions": "",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Execute",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "46ac08a4-7c21-4981-8b4e-224447a6e4fd",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SetModifier",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ab128d32-24b0-4fb2-8e73-b30e6c8759bc",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RemoveModifier",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

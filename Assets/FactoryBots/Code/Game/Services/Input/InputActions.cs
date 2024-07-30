@@ -46,6 +46,24 @@ namespace FactoryBots.Game.Services.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SetModifier"",
+                    ""type"": ""Button"",
+                    ""id"": ""8e609342-8445-4a36-89c5-d5021efb12f6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RemoveModifier"",
+                    ""type"": ""Button"",
+                    ""id"": ""c354ee28-245d-4485-a89b-2b6c68cfffb1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -53,7 +71,7 @@ namespace FactoryBots.Game.Services.Input
                     ""name"": """",
                     ""id"": ""2230f7ca-5f33-45e0-95d7-f4c98bdc13a0"",
                     ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Select"",
@@ -64,10 +82,32 @@ namespace FactoryBots.Game.Services.Input
                     ""name"": """",
                     ""id"": ""8f0d8d70-446d-4c66-9ec3-d44b495bf971"",
                     ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Execute"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""46ac08a4-7c21-4981-8b4e-224447a6e4fd"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SetModifier"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ab128d32-24b0-4fb2-8e73-b30e6c8759bc"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": ""Press(behavior=1)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RemoveModifier"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -80,6 +120,8 @@ namespace FactoryBots.Game.Services.Input
             m_GameInput = asset.FindActionMap("GameInput", throwIfNotFound: true);
             m_GameInput_Select = m_GameInput.FindAction("Select", throwIfNotFound: true);
             m_GameInput_Execute = m_GameInput.FindAction("Execute", throwIfNotFound: true);
+            m_GameInput_SetModifier = m_GameInput.FindAction("SetModifier", throwIfNotFound: true);
+            m_GameInput_RemoveModifier = m_GameInput.FindAction("RemoveModifier", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -143,12 +185,16 @@ namespace FactoryBots.Game.Services.Input
         private List<IGameInputActions> m_GameInputActionsCallbackInterfaces = new List<IGameInputActions>();
         private readonly InputAction m_GameInput_Select;
         private readonly InputAction m_GameInput_Execute;
+        private readonly InputAction m_GameInput_SetModifier;
+        private readonly InputAction m_GameInput_RemoveModifier;
         public struct GameInputActions
         {
             private @InputActions m_Wrapper;
             public GameInputActions(@InputActions wrapper) { m_Wrapper = wrapper; }
             public InputAction @Select => m_Wrapper.m_GameInput_Select;
             public InputAction @Execute => m_Wrapper.m_GameInput_Execute;
+            public InputAction @SetModifier => m_Wrapper.m_GameInput_SetModifier;
+            public InputAction @RemoveModifier => m_Wrapper.m_GameInput_RemoveModifier;
             public InputActionMap Get() { return m_Wrapper.m_GameInput; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -164,6 +210,12 @@ namespace FactoryBots.Game.Services.Input
                 @Execute.started += instance.OnExecute;
                 @Execute.performed += instance.OnExecute;
                 @Execute.canceled += instance.OnExecute;
+                @SetModifier.started += instance.OnSetModifier;
+                @SetModifier.performed += instance.OnSetModifier;
+                @SetModifier.canceled += instance.OnSetModifier;
+                @RemoveModifier.started += instance.OnRemoveModifier;
+                @RemoveModifier.performed += instance.OnRemoveModifier;
+                @RemoveModifier.canceled += instance.OnRemoveModifier;
             }
 
             private void UnregisterCallbacks(IGameInputActions instance)
@@ -174,6 +226,12 @@ namespace FactoryBots.Game.Services.Input
                 @Execute.started -= instance.OnExecute;
                 @Execute.performed -= instance.OnExecute;
                 @Execute.canceled -= instance.OnExecute;
+                @SetModifier.started -= instance.OnSetModifier;
+                @SetModifier.performed -= instance.OnSetModifier;
+                @SetModifier.canceled -= instance.OnSetModifier;
+                @RemoveModifier.started -= instance.OnRemoveModifier;
+                @RemoveModifier.performed -= instance.OnRemoveModifier;
+                @RemoveModifier.canceled -= instance.OnRemoveModifier;
             }
 
             public void RemoveCallbacks(IGameInputActions instance)
@@ -195,6 +253,8 @@ namespace FactoryBots.Game.Services.Input
         {
             void OnSelect(InputAction.CallbackContext context);
             void OnExecute(InputAction.CallbackContext context);
+            void OnSetModifier(InputAction.CallbackContext context);
+            void OnRemoveModifier(InputAction.CallbackContext context);
         }
     }
 }

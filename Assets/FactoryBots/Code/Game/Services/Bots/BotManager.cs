@@ -71,7 +71,7 @@ namespace FactoryBots.Game.Services.Bots
             }
         }
 
-        private void OnExecutePerformed(GameObject targetObject, Vector3 targetPosition)
+        private void OnExecutePerformed(GameObject targetObject, Vector3 targetPosition, bool isModifiedCommand)
         {
             if (_isAlarm)
             {
@@ -85,14 +85,14 @@ namespace FactoryBots.Game.Services.Bots
 
             if (targetObject.CompareTag(WALKABLE_TAG))
             {
-                _selectedBot.ExecutePositionCommand(targetPosition);
+                _selectedBot.ExecutePositionCommand(targetPosition, isModifiedCommand);
                 _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
                 return;
             }
 
             if (targetObject.CompareTag(BUILDING_TAG))
             {
-                _selectedBot.ExecuteDeliveryCommand(targetObject.GetComponent<IBuilding>());
+                _selectedBot.ExecuteDeliveryCommand(targetObject.GetComponent<IBuilding>(), isModifiedCommand);
                 _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
             }
         }

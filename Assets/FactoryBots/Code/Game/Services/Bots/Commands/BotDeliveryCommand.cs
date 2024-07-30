@@ -1,4 +1,5 @@
 ﻿using FactoryBots.Game.Services.Buildings;
+using UnityEngine;
 
 namespace FactoryBots.Game.Services.Bots.Commands
 {
@@ -6,6 +7,7 @@ namespace FactoryBots.Game.Services.Bots.Commands
     {
         public readonly IBuilding TargetBuilding;
 
+        public Vector3 TargetPosition => TargetBuilding.InteractionPosition;
         public string TargetId => TargetBuilding.Id;
         public bool IsTargetReached { get; private set; }
 

@@ -1,5 +1,4 @@
-﻿using FactoryBots.Game.Services.Buildings;
-using UnityEngine;
+﻿using FactoryBots.Game.Services.Bots.Commands;
 
 namespace FactoryBots.Game.Services.Bots
 {
@@ -11,8 +10,8 @@ namespace FactoryBots.Game.Services.Bots
         void Select();
         void Unselect();
         void ExecuteBaseCommand();
-        void ExecutePositionCommand(Vector3 targetPosition, bool isModifiedCommand);
-        void ExecuteDeliveryCommand(IBuilding targetBuilding, bool isModifiedCommand);
+        void ClearAllAndExecuteCommand(IBotCommand command);
+        void AddCommand(IBotCommand command);
         void ExecutePreviousCommand();
         void Cleanup();
     }

@@ -1,4 +1,5 @@
-﻿using FactoryBots.Game.Services.Bots.Components;
+﻿using FactoryBots.Game.Services.Bots.Commands;
+using FactoryBots.Game.Services.Bots.Components;
 using FactoryBots.Game.Services.Buildings;
 using FactoryBots.Game.Services.Input;
 using FactoryBots.Game.Services.Overlay;
@@ -71,7 +72,7 @@ namespace FactoryBots.Game.Services.Bots
             }
         }
 
-        private void OnExecutePerformed(GameObject targetObject, Vector3 targetPosition, bool isModifiedCommand)
+        private void OnExecutePerformed(GameObject targetObject, Vector3 targetPosition, bool isFeaturedCommand)
         {
             if (_isAlarm)
             {
@@ -85,16 +86,30 @@ namespace FactoryBots.Game.Services.Bots
 
             if (targetObject.CompareTag(WALKABLE_TAG))
             {
-                _selectedBot.ExecutePositionCommand(targetPosition, isModifiedCommand);
-                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
+                BotPositionCommand command = new BotPositionCommand(targetPosition);
+                SendBotCommand(command, isFeaturedCommand);
                 return;
             }
 
             if (targetObject.CompareTag(BUILDING_TAG))
             {
-                _selectedBot.ExecuteDeliveryCommand(targetObject.GetComponent<IBuilding>(), isModifiedCommand);
-                _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
+                BotDeliveryCommand command = new BotDeliveryCommand(targetObject.GetComponent<IBuilding>());
+                SendBotCommand(command, isFeaturedCommand);
             }
+        }
+
+        private void SendBotCommand(IBotCommand command, bool isFeaturedCommand)
+        {
+            if (isFeaturedCommand)
+            {
+                _selectedBot.AddCommand(command);
+            }
+            else
+            {
+                _selectedBot.ClearAllAndExecuteCommand(command);
+            }
+
+            _overlay.BotStatusPanel.UpdateStatusText(_selectedBot.Status);
         }
 
         private void OnAlarmStarted()

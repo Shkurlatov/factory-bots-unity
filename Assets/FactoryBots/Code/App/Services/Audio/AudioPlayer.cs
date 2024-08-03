@@ -19,6 +19,6 @@ namespace FactoryBots.App.Services.Audio
         public void PlayExampleEffectSound() => 
             _effectSource.PlayOneShot(_exampleEffectClip);
 
-        public void Cleanup() { }
+        public void Dispose() { }
     }
 }

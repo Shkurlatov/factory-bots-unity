@@ -8,6 +8,6 @@ namespace FactoryBots.App.Services.Configs
         public BotConfig GetBotConfig() =>
             Resources.Load<BotConfig>(ConfigPath.BOT_CONFIG);
 
-        public void Cleanup() { }
+        public void Dispose() { }
     }
 }

@@ -28,6 +28,6 @@ namespace FactoryBots.App.Services.Assets
             return Object.Instantiate(prefab, at, Quaternion.identity, parent);
         }
 
-        public void Cleanup() { }
+        public void Dispose() { }
     }
 }

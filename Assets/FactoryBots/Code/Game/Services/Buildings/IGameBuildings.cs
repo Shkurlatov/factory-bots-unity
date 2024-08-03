@@ -2,6 +2,6 @@
 {
     public interface IGameBuildings : IGameService
     {
-        void Initialize(BoxFactory boxFactory);
+
     }
 }

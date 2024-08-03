@@ -4,7 +4,7 @@ namespace FactoryBots.App.Bootstrap
 {
     public class AppBootstrapper : MonoBehaviour
     {
-        [SerializeField] SceneLoader _sceneLoader;
+        [SerializeField] private SceneLoader _sceneLoader;
 
         private App _app;
 

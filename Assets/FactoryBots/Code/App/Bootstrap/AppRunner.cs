@@ -4,7 +4,7 @@ namespace FactoryBots.App.Bootstrap
 {
     public class AppRunner : MonoBehaviour
     {
-        public AppBootstrapper AppBootstrapperPrefab;
+        [SerializeField] private AppBootstrapper _appBootstrapperPrefab;
 
         private void Awake()
         {
@@ -12,7 +12,7 @@ namespace FactoryBots.App.Bootstrap
 
             if (bootstrapper == null)
             {
-                Instantiate(AppBootstrapperPrefab);
+                Instantiate(_appBootstrapperPrefab);
             }
         }
     }

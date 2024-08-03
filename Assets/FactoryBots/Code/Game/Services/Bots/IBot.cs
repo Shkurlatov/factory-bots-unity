@@ -11,7 +11,7 @@ namespace FactoryBots.Game.Services.Bots
         void Unselect();
         string GetStatus();
         bool IsCloseToBase();
-        void ExecuteBaseCommand();
+        void ReturnToBase();
         void ClearAllAndExecuteCommand(IBotCommand command);
         void AddCommand(IBotCommand command);
         void ExecutePreviousCommand();

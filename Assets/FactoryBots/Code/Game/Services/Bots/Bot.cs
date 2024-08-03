@@ -63,7 +63,7 @@ namespace FactoryBots.Game.Services.Bots
             return distanceToBase < _closeToBaseDistance;
         }
 
-        public void ExecuteBaseCommand()
+        public void ReturnToBase()
         {
             _isFollowBasePoint = true;
 

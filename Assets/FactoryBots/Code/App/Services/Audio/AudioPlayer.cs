@@ -13,10 +13,10 @@ namespace FactoryBots.App.Services.Audio
         private void Awake() => 
             DontDestroyOnLoad(gameObject);
 
-        public void PlayExampleSoundSound() => 
+        public void PlayExampleSound() => 
             _soundSource.PlayOneShot(_exampleSoundClip);
 
-        public void PlayExampleEffectSound() => 
+        public void PlayExampleEffect() => 
             _effectSource.PlayOneShot(_exampleEffectClip);
 
         public void Dispose() { }

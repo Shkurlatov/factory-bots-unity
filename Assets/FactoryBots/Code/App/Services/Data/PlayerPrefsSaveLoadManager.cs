@@ -57,7 +57,7 @@ namespace FactoryBots.App.Services.Progress
             }
         }
 
-        public void Cleanup() => 
+        public void Dispose() => 
             _semaphore.Dispose();
     }
 }

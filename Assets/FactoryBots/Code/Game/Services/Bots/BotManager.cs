@@ -158,7 +158,7 @@ namespace FactoryBots.Game.Services.Bots
         {
             foreach (IBot bot in _bots.Values)
             {
-                bot.ExecuteBaseCommand();
+                bot.ReturnToBase();
             }
         }
 

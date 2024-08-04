@@ -31,8 +31,7 @@ namespace FactoryBots.App.States
 
         private void LaunchGame(GameMode gameMode)
         {
-            _menuPanel.StartAction -= LaunchGame;
-            _menuPanel.ExitAction -= QuitGame;
+            Unsubscribe();
             _menuPanel.gameObject.SetActive(false);
 
             _appStateMachine.Enter<LaunchGameState, GameMode>(gameMode);
@@ -40,14 +39,19 @@ namespace FactoryBots.App.States
 
         private void QuitGame()
         {
-            _menuPanel.StartAction -= LaunchGame;
-            _menuPanel.ExitAction -= QuitGame;
+            Unsubscribe();
 
 #if UNITY_EDITOR
             EditorApplication.isPlaying = false;
 #else
         Application.Quit();
 #endif
+        }
+
+        private void Unsubscribe()
+        {
+            _menuPanel.StartAction -= LaunchGame;
+            _menuPanel.ExitAction -= QuitGame;
         }
 
         public void Exit() { }

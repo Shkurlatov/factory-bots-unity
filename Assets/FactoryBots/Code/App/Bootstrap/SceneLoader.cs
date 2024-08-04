@@ -18,12 +18,7 @@ namespace FactoryBots.App.Bootstrap
                 yield break;
             }
 
-            AsyncOperation waitNextScene = SceneManager.LoadSceneAsync(nextScene);
-
-            while (waitNextScene.isDone == false)
-            {
-                yield return null;
-            }
+            yield return SceneManager.LoadSceneAsync(nextScene);
 
             onLoaded?.Invoke();
         }

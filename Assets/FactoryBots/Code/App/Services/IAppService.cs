@@ -1,7 +1,8 @@
-﻿namespace FactoryBots.App.Services
+﻿using System;
+
+namespace FactoryBots.App.Services
 {
-    public interface IAppService
+    public interface IAppService : IDisposable
     {
-        void Cleanup();
     }
 }

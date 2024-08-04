@@ -1,15 +1,18 @@
 ﻿using System;
+using UnityEngine;
 
 namespace FactoryBots.App.Services.Progress
 {
     [Serializable]
     public class SettingsData
     {
-        public int BotAmount;
+        [SerializeField] private int _botAmount;
+
+        public int BotAmount => _botAmount;
 
         public SettingsData(int botAmount)
         {
-            BotAmount = botAmount;
+            _botAmount = botAmount;
         }
     }
 }

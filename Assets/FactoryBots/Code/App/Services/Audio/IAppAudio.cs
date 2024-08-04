@@ -2,7 +2,7 @@
 {
     public interface IAppAudio : IAppService
     {
-        void PlayExampleSoundSound();
-        void PlayExampleEffectSound();
+        void PlayExampleSound();
+        void PlayExampleEffect();
     }
 }
